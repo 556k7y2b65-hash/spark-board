@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spark Board v3 — Firepit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --charcoal: #1A1A1A;
+            --dark-surface: #222222;
+            --card-bg: #2A2A2A;
+            --ember-orange: #E85D26;
+            --cream: #FDF5E6;
+            --teal: #4A9B8E;
+            --terracotta: #C67B5C;
+            --gold: #D4A84B;
+            --text-light: #E8E8E8;
+            --text-muted: #A0A0A0;
+            --border-subtle: #333333;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--charcoal);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 200px 1fr 320px;
+            grid-template-rows: 1fr 80px;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* LEFT SIDEBAR */
+        .sidebar {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            background-color: var(--dark-surface);
+            border-right: 1px solid var(--border-subtle);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-logo-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            padding: 10px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background-color: transparent;
+            color: var(--text-muted);
+        }
+
+        .nav-tab:hover {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+        }
+
+        .nav-tab.active {
+            border-left-color: var(--ember-orange);
+            background-color: rgba(232, 93, 38, 0.1);
+            color: var(--cream);
+        }
+
+        .balance-section {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .balance-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .balance-bar {
+            background-color: var(--card-bg);
+            height: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .balance-fill {
+            background: linear-gradient(90deg, var(--teal), var(--ember-orange));
+            height: 100%;
+            width: 65%;
+            transition: width 0.3s ease;
+        }
+
+        .balance-value {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            grid-column: 2;
+            grid-row: 1;
+            background-color: var(--charcoal);
+            border-right: 1px solid var(--border-subtle);
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 30px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* TODAY TAB */
+        .today-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .spark-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spark-card:hover {
+            border-color: var(--ember-orange);
+            box-shadow: 0 0 12px rgba(232, 93, 38, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .spark-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--ember-orange);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .spark-card:hover::before {
+            opacity: 1;
+        }
+
+        .spark-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 10px;
+        }
+
+        .spark-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .spark-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .spark-value {
+            color: var(--ember-orange);
+            font-weight: 600;
+        }
+
+        .schedule-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .schedule-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 15px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .schedule-table th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .schedule-table tr:hover {
+            background-color: rgba(232, 93, 38, 0.05);
+        }
+
+        /* FEED TAB */
+        .feed-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--ember-orange);
+            color: var(--ember-orange);
+        }
+
+        .filter-btn.active {
+            background-color: var(--ember-orange);
+            border-color: var(--ember-orange);
+            color: var(--charcoal);
+        }
+
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .feed-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .feed-card:hover {
+            border-color: var(--ember-orange);
+            box-shadow: 0 0 12px rgba(232, 93, 38, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .feed-source {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .feed-content {
+            color: var(--text-light);
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .feed-category {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: rgba(232, 93, 38, 0.15);
+            border-radius: 3px;
+            font-size: 10px;
+            color: var(--ember-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* LAB TAB */
+        .lab-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .lab-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .lab-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 15px;
+        }
+
+        .hook-item, .card-item {
+            background-color: rgba(232, 93, 38, 0.08);
+            border: 1px solid rgba(232, 93, 38, 0.2);
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .hook-variation {
+            background-color: transparent;
+            border-left: 2px solid var(--ember-orange);
+            padding-left: 12px;
+            margin: 8px 0 8px 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* MAP TAB */
+        .map-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .map-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .map-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 15px;
+        }
+
+        .positioning-plot {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, rgba(74, 155, 142, 0.1), rgba(232, 93, 38, 0.1));
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .plot-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .plot-point:hover {
+            width: 12px;
+            height: 12px;
+            margin-left: -2px;
+            margin-top: -2px;
+        }
+
+        .plot-point.truth {
+            background-color: var(--teal);
+        }
+
+        .plot-point.fun {
+            background-color: var(--ember-orange);
+        }
+
+        .plot-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .creator-radar {
+            font-size: 12px;
+        }
+
+        .creator-item {
+            background-color: rgba(232, 93, 38, 0.08);
+            border-left: 3px solid var(--ember-orange);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .creator-item:hover {
+            background-color: rgba(232, 93, 38, 0.15);
+            padding-left: 16px;
+        }
+
+        .creator-name {
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 3px;
+        }
+
+        .creator-stat {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* RIGHT PANEL */
+        .right-panel {
+            grid-column: 3;
+            grid-row: 1;
+            background-color: var(--dark-surface);
+            border-left: 1px solid var(--border-subtle);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-header {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cream);
+        }
+
+        .panel-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 11px;
+        }
+
+        .lens-item {
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: rgba(232, 93, 38, 0.08);
+            border-radius: 3px;
+            border-left: 2px solid var(--ember-orange);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lens-item:hover {
+            background-color: rgba(232, 93, 38, 0.15);
+        }
+
+        .lens-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .lens-value {
+            color: var(--cream);
+            font-weight: 600;
+        }
+
+        /* BOTTOM TRAY */
+        .bottom-tray {
+            grid-column: 2 / 4;
+            grid-row: 2;
+            background: linear-gradient(180deg, rgba(232,93,38,0.06) 0%, var(--dark-surface) 50%);
+            border-top: 1px solid rgba(232,93,38,0.15);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: space-between;
+            backdrop-filter: blur(8px);
+        }
+
+        .tray-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 30px;
+        }
+
+        .tray-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
+        }
+
+        .tray-stat-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .tray-stat-value {
+            color: var(--cream);
+            font-weight: 700;
+            font-size: 16px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tray-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tray-btn {
+            padding: 6px 12px;
+            background-color: var(--ember-orange);
+            border: none;
+            border-radius: 4px;
+            color: var(--charcoal);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .tray-btn:hover {
+            background-color: var(--cream);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(232, 93, 38, 0.3);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--border-subtle);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--text-muted);
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1);
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: #222;
+            border: 1px solid #3A3A3A;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 560px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        @keyframes modalIn {
+            from { transform: translateY(20px) scale(0.97); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #FDF5E6;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 20px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .modal-text {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        /* ===== PREMIUM POLISH PASS ===== */
+
+        /* Font rendering */
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+        /* Subtle vignette on main content */
+        .main-content::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 200px; right: 320px; bottom: 80px;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.15) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Page load stagger */
+        .sidebar { animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+        .main-content { animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1) 0.15s both; }
+        .right-panel { animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1) 0.3s both; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 16px rgba(232,93,38,0.4); }
+            50% { box-shadow: 0 0 28px rgba(232,93,38,0.6); }
+        }
+
+        /* Card entrance stagger */
+        .feed-card, .spark-card, .hook-item, .card-item, .creator-item {
+            animation: cardEnter 0.35s cubic-bezier(0.4,0,0.2,1) both;
+        }
+        .feed-card:nth-child(1), .spark-card:nth-child(1) { animation-delay: 0.05s; }
+        .feed-card:nth-child(2), .spark-card:nth-child(2) { animation-delay: 0.1s; }
+        .feed-card:nth-child(3), .spark-card:nth-child(3) { animation-delay: 0.15s; }
+        .feed-card:nth-child(4) { animation-delay: 0.2s; }
+        .feed-card:nth-child(5) { animation-delay: 0.25s; }
+        .feed-card:nth-child(6) { animation-delay: 0.3s; }
+        .feed-card:nth-child(7) { animation-delay: 0.35s; }
+        .feed-card:nth-child(8) { animation-delay: 0.4s; }
+        .feed-card:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Enhanced card hovers */
+        .feed-card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); border-radius: 12px; }
+        .feed-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,93,38,0.2);
+        }
+
+        .spark-card { border-radius: 12px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+        .spark-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 24px rgba(232,93,38,0.08);
+            border-color: var(--ember-orange);
+        }
+
+        /* Sidebar active tab sliding indicator */
+        .nav-tab {
+            position: relative;
+            border-left: 3px solid transparent;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .nav-tab.active {
+            border-left-color: var(--ember-orange);
+            background: rgba(232,93,38,0.1);
+            color: var(--cream);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(232,93,38,0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(232,93,38,0.4); }
+
+        /* Filter pills */
+        .filter-btn {
+            border-radius: 20px;
+            padding: 8px 16px;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+        }
+        .filter-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Better feed grid */
+        .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+        /* Reddit cards special treatment */
+        .feed-card[data-source="Reddit"] {
+            background: #2A2520 !important;
+            border-color: rgba(212,168,75,0.2);
+        }
+
+        /* Schedule table rows */
+        .schedule-table tr { transition: all 0.2s ease; }
+        .schedule-table tr:hover { background: rgba(232,93,38,0.06); }
+        .schedule-table td { padding: 12px 8px; }
+
+        /* Bottom bar enhancement */
+        .bottom-bar {
+            background: var(--dark-surface);
+            border-top: 1px solid var(--border-subtle);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Right panel lens */
+        .right-panel { background: var(--dark-surface); }
+
+        /* Button hover glow */
+        button:hover { transition: all 0.2s cubic-bezier(0.4,0,0.2,1); }
+
+        /* Spark card first child spans full width */
+        .today-grid .spark-card:first-child:last-child { grid-column: 1 / -1; }
+
+        /* Tab content smooth transitions */
+        .tab-content { transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1); }
+
+        /* Modal backdrop */
+        .modal-overlay { backdrop-filter: blur(4px); }
+
+        /* Positioning plot dots */
+        .plot-point {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .plot-point:hover { transform: scale(1.8); z-index: 10; }
+        .plot-point.truth { background: var(--terracotta); }
+        .plot-point.fun { background: var(--teal); }
+
+        /* Creator cards */
+        .creator-item {
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: var(--card-bg);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .creator-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            width: 3px; height: 0;
+            background: var(--ember-orange);
+            transition: height 0.3s ease;
+            transform: translateY(-50%);
+            border-radius: 2px;
+        }
+        .creator-item:hover {
+            border-color: rgba(232,93,38,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .creator-item:hover::before { height: 70%; }
+
+        /* Logo glow */
+        .sidebar-logo {
+            text-shadow: 0 0 20px rgba(232,93,38,0.15);
+        }
+
+        /* Balance bar gradient */
+        .balance-fill {
+            background: linear-gradient(90deg, var(--terracotta), var(--gold) 40%, var(--teal));
+            border-radius: 4px;
+        }
+
+        /* Schedule section */
+        .schedule-section { border-radius: 12px; }
+
+        /* Lab mode buttons */
+        .lab-mode-btn {
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .lab-mode-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* ===== FOUNDERS LAB POLISH ===== */
+
+        /* Founder section headers — avatar glow */
+        #elanInsights, #koreenInsights, #moreFounders {
+            animation: cardEnter 0.4s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        /* Founder insight cards — stagger entrance */
+        #elanInsights > div, #koreenInsights > div, #moreFounders > div {
+            animation: cardEnter 0.35s cubic-bezier(0.4,0,0.2,1) both;
+            border-radius: 12px;
+        }
+        #elanInsights > div:nth-child(1), #koreenInsights > div:nth-child(1), #moreFounders > div:nth-child(1) { animation-delay: 0.05s; }
+        #elanInsights > div:nth-child(2), #koreenInsights > div:nth-child(2), #moreFounders > div:nth-child(2) { animation-delay: 0.1s; }
+        #elanInsights > div:nth-child(3), #koreenInsights > div:nth-child(3), #moreFounders > div:nth-child(3) { animation-delay: 0.15s; }
+        #elanInsights > div:nth-child(4), #koreenInsights > div:nth-child(4), #moreFounders > div:nth-child(4) { animation-delay: 0.2s; }
+        #elanInsights > div:nth-child(5), #koreenInsights > div:nth-child(5), #moreFounders > div:nth-child(5) { animation-delay: 0.25s; }
+        #elanInsights > div:nth-child(6), #koreenInsights > div:nth-child(6), #moreFounders > div:nth-child(6) { animation-delay: 0.3s; }
+        #elanInsights > div:nth-child(7), #koreenInsights > div:nth-child(7), #moreFounders > div:nth-child(7) { animation-delay: 0.35s; }
+
+        /* Coach section — gradient shimmer */
+        @keyframes coachShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Coach priority cards */
+        #firepitActions > div {
+            animation: cardEnter 0.3s cubic-bezier(0.4,0,0.2,1) both;
+            transition: all 0.2s ease;
+        }
+        #firepitActions > div:hover {
+            background: rgba(232,93,38,0.04);
+        }
+        #firepitActions > div:nth-child(1) { animation-delay: 0.05s; }
+        #firepitActions > div:nth-child(2) { animation-delay: 0.1s; }
+        #firepitActions > div:nth-child(3) { animation-delay: 0.15s; }
+        #firepitActions > div:nth-child(4) { animation-delay: 0.2s; }
+        #firepitActions > div:nth-child(5) { animation-delay: 0.25s; }
+        #firepitActions > div:nth-child(6) { animation-delay: 0.3s; }
+
+        /* Required reading links hover */
+        a[href*="tim.blog"], a[href*="substack"], a[href*="microempires"], a[href*="digitalcampfires"] {
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        a[href*="tim.blog"]:hover, a[href*="substack"]:hover, a[href*="microempires"]:hover, a[href*="digitalcampfires"]:hover {
+            transform: translateX(4px);
+            border-left: 3px solid var(--ember-orange) !important;
+        }
+
+        /* Avatar circles pulse on section hover */
+        div[style*="border-radius:50%"][style*="width:40px"]:hover {
+            box-shadow: 0 0 16px rgba(232,93,38,0.3);
+        }
+
+        /* Coach fire icon glow */
+        div[style*="width:56px"][style*="border-radius:50%"] {
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        /* ===== CONSUMER-GRADE POLISH — FINAL PASS ===== */
+
+        /* Ambient background warmth — subtle radial glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: 20%;
+            width: 80%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(232,93,38,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Sidebar premium feel */
+        .sidebar {
+            background: linear-gradient(180deg, #1E1E1E 0%, #191919 100%) !important;
+        }
+
+        /* Logo area polish */
+        .sidebar-logo {
+            font-size: 20px !important;
+            letter-spacing: 1.5px !important;
+            text-shadow: 0 0 30px rgba(232,93,38,0.12);
+        }
+
+        /* Nav tabs — more spacious, refined */
+        .nav-tab {
+            padding: 12px 16px !important;
+            border-radius: 10px !important;
+            font-size: 12px !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 2px;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.04) !important;
+            transform: translateX(2px);
+        }
+        .nav-tab.active {
+            background: rgba(232,93,38,0.08) !important;
+            border-left: 3px solid #E85D26 !important;
+            color: #FDF5E6 !important;
+            box-shadow: inset 0 0 20px rgba(232,93,38,0.04);
+        }
+
+        /* Main content — subtle texture */
+        .main-content {
+            background: linear-gradient(180deg, #1A1A1A 0%, #171717 50%, #1A1A1A 100%) !important;
+        }
+
+        /* Tab content padding */
+        .tab-content {
+            padding: 36px 40px !important;
+        }
+
+        /* Section titles — dramatic */
+        .tab-content h2, .section-title {
+            font-size: 32px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            color: #FDF5E6 !important;
+            margin-bottom: 6px !important;
+        }
+
+        /* Card grid — more spacious */
+        .feed-grid {
+            gap: 20px !important;
+        }
+
+        /* Feed cards — glass effect */
+        .feed-card {
+            background: rgba(42,42,42,0.6) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            border-radius: 14px !important;
+            padding: 20px !important;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .feed-card:hover {
+            background: rgba(50,50,50,0.8) !important;
+            border-color: rgba(232,93,38,0.25) !important;
+            transform: translateY(-6px) !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,93,38,0.1) !important;
+        }
+
+        /* Reddit cards — warmer, more distinct */
+        .feed-card[data-source="Reddit"] {
+            background: rgba(42,37,32,0.8) !important;
+            border-color: rgba(212,168,75,0.15) !important;
+        }
+        .feed-card[data-source="Reddit"]:hover {
+            border-color: rgba(212,168,75,0.4) !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(212,168,75,0.06) !important;
+        }
+
+        /* Spark cards — hero treatment */
+        .spark-card {
+            background: rgba(42,42,42,0.6) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            border-radius: 14px !important;
+            padding: 24px !important;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .spark-card:hover {
+            transform: translateY(-6px) !important;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 40px rgba(232,93,38,0.06) !important;
+            border-color: rgba(232,93,38,0.3) !important;
+        }
+        .spark-card::before {
+            background: linear-gradient(90deg, #E85D26, #D4A84B) !important;
+            height: 2px !important;
+            opacity: 1 !important;
+        }
+
+        /* Spark title — more dramatic */
+        .spark-title {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            line-height: 1.3 !important;
+        }
+
+        /* Schedule section polish */
+        .schedule-section {
+            background: rgba(42,42,42,0.4) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.04) !important;
+            border-radius: 14px !important;
+        }
+        .schedule-table td {
+            padding: 14px 10px !important;
+            font-size: 13px !important;
+        }
+        .schedule-table tr {
+            transition: all 0.2s ease !important;
+        }
+        .schedule-table tr:hover {
+            background: rgba(232,93,38,0.04) !important;
+        }
+
+        /* Filter buttons — pills */
+        .filter-btn {
+            border-radius: 24px !important;
+            padding: 8px 18px !important;
+            font-size: 11px !important;
+            backdrop-filter: blur(4px);
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .filter-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #E85D26, #D4A84B) !important;
+            border-color: transparent !important;
+            color: white !important;
+            box-shadow: 0 4px 16px rgba(232,93,38,0.3) !important;
+        }
+
+        /* Right panel lens — premium */
+        .right-panel {
+            background: linear-gradient(180deg, #1E1E1E 0%, #1A1A1A 100%) !important;
+            border-left: 1px solid rgba(255,255,255,0.04) !important;
+        }
+
+        /* Bottom bar — elevated */
+        .bottom-tray {
+            background: linear-gradient(180deg, rgba(30,30,30,0.95) 0%, #1A1A1A 100%) !important;
+            backdrop-filter: blur(12px) !important;
+            border-top: 1px solid rgba(232,93,38,0.08) !important;
+        }
+
+        /* Buttons — premium interactive */
+        button {
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        button:active {
+            transform: scale(0.97) !important;
+        }
+
+        /* Link hover underlines */
+        a:hover {
+            text-decoration: none !important;
+        }
+
+        /* Balance bar */
+        .balance-bar {
+            border-radius: 6px !important;
+            height: 8px !important;
+            border: none !important;
+            background: #222 !important;
+            overflow: hidden;
+        }
+        .balance-fill {
+            border-radius: 6px !important;
+            height: 8px !important;
+        }
+
+        /* Modal — cinematic */
+        .modal-overlay {
+            background: rgba(0,0,0,0.75) !important;
+            backdrop-filter: blur(12px) !important;
+        }
+        .modal-content, .modal-panel {
+            border-radius: 20px !important;
+            border: 1px solid rgba(255,255,255,0.08) !important;
+            box-shadow: 0 32px 100px rgba(0,0,0,0.6) !important;
+            background: #222 !important;
+        }
+
+        /* Positioning plot — refined */
+        .positioning-plot, #positioningPlot {
+            border-radius: 14px !important;
+            border: 1px solid rgba(255,255,255,0.04) !important;
+            background: rgba(30,30,30,0.6) !important;
+        }
+        .plot-point {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .plot-point:hover {
+            transform: scale(2) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
+            z-index: 20 !important;
+        }
+
+        /* Creator items — refined */
+        .creator-item {
+            border-radius: 12px !important;
+            padding: 16px !important;
+            background: rgba(42,42,42,0.4) !important;
+            border: 1px solid rgba(255,255,255,0.04) !important;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+        }
+        .creator-item:hover {
+            background: rgba(50,50,50,0.6) !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3) !important;
+            border-color: rgba(232,93,38,0.2) !important;
+        }
+
+        /* Smooth scrolling everywhere */
+        * {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection color */
+        ::selection {
+            background: rgba(232,93,38,0.3);
+            color: #FDF5E6;
+        }
+
+        /* Focus states for accessibility */
+        button:focus-visible, a:focus-visible {
+            outline: 2px solid #E85D26;
+            outline-offset: 2px;
+        }
+
+        /* Print: hide sidebar and panels */
+        @media print {
+            .sidebar, .right-panel, .bottom-tray { display: none !important; }
+            .container { grid-template-columns: 1fr !important; }
+        }
+
+        /* Responsive refinement */
+        @media (max-width: 1200px) {
+            .container { grid-template-columns: 180px 1fr 280px !important; }
+            .tab-content { padding: 24px !important; }
+        }
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr !important; grid-template-rows: auto 1fr auto !important; }
+            .sidebar { grid-column: 1; grid-row: 1; flex-direction: row !important; overflow-x: auto !important; padding: 12px !important; }
+            .nav-tabs { flex-direction: row !important; gap: 4px !important; }
+            .right-panel { display: none !important; }
+            .feed-grid { grid-template-columns: 1fr !important; }
+            .today-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <div style="width:32px;height:32px;background:var(--ember-orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FDF5E6" stroke-width="2"><path d="M12 2c-2 4-6 6-6 10a6 6 0 0012 0c0-4-4-6-6-10z"/></svg>
+                </div>
+                <div class="sidebar-logo">SPARK BOARD</div>
+                <div class="sidebar-logo-sub">by Firepit</div>
+            </div>
+
+            <nav class="nav-tabs">
+                <div class="nav-tab active" data-tab="today">TODAY</div>
+                <div class="nav-tab" data-tab="feed">THE FEED</div>
+                <div class="nav-tab" data-tab="lab">THE LAB</div>
+                <div class="nav-tab" data-tab="map">THE MAP</div>
+                <div class="nav-tab" data-tab="founders">FOUNDERS LAB</div>
+            </nav>
+
+            <div class="balance-section">
+                <div class="balance-label">Truth/Fun Balance</div>
+                <div class="balance-bar">
+                    <div class="balance-fill"></div>
+                </div>
+                <div class="balance-value">65% Truth / 35% Fun</div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TODAY TAB -->
+            <div class="tab-content active" data-tab="today">
+                <!-- HEADER -->
+                <div style="margin-bottom:32px">
+                    <h1 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:800;color:var(--cream);letter-spacing:-0.5px;margin-bottom:6px">Your Morning Brief</h1>
+                    <p style="font-size:14px;color:#999;line-height:1.5">3 content ideas to make this week, your 7-day posting schedule, and what's moving in culture right now.</p>
+                </div>
+
+                <!-- THIS WEEK'S 3 SPARKS -->
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:12px">🔥 3 Things Firepit Should Make This Week</div>
+                <div class="today-grid" style="margin-bottom:36px">
+                    <div class="spark-card" onclick="openCard('The One Real Question Challenge')">
+                        <div style="display:flex;gap:6px;margin-bottom:12px">
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(212,168,75,0.15);color:var(--gold)">Both · Truth + Fun</span>
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:#888">30-day series</span>
+                        </div>
+                        <div class="spark-title" style="font-size:20px;margin-bottom:12px">The One Real Question Challenge</div>
+                        <div style="font-family:'Playfair Display',serif;font-style:italic;color:var(--cream);font-size:15px;line-height:1.6;margin-bottom:14px;padding:14px;background:rgba(232,93,38,0.04);border-left:3px solid var(--ember-orange);border-radius:0 8px 8px 0">"This month, skip 'how are you.' Ask one real question instead. We'll give you a new one every day. 🔥"</div>
+                        <div style="font-size:12px;color:#AAA;line-height:1.5;margin-bottom:12px"><strong style="color:var(--ember-orange)">Format:</strong> POV talking-to-camera + text overlay of daily question. Lo-fi, phone footage, natural light. Post at 7pm when people are reflecting.</div>
+                        <div style="font-size:11px;color:#666;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)"><strong style="color:#888">Inspired by:</strong> r/DecidingToBeBetter "One Real Question" experiment · 22.8K upvotes</div>
+                    </div>
+                    <div class="spark-card" onclick="openCard('What Would 10-Year-Old You Think?')">
+                        <div style="display:flex;gap:6px;margin-bottom:12px">
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(198,123,92,0.15);color:var(--terracotta)">Truth</span>
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:#888">One-off Reel</span>
+                        </div>
+                        <div class="spark-title" style="font-size:20px;margin-bottom:12px">What Would 10-Year-Old You Think?</div>
+                        <div style="font-family:'Playfair Display',serif;font-style:italic;color:var(--cream);font-size:15px;line-height:1.6;margin-bottom:14px;padding:14px;background:rgba(232,93,38,0.04);border-left:3px solid var(--terracotta);border-radius:0 8px 8px 0">"Sunday night question: What would 10-year-old you think of who you've become? Ask someone. See what happens."</div>
+                        <div style="font-size:12px;color:#AAA;line-height:1.5;margin-bottom:12px"><strong style="color:var(--ember-orange)">Format:</strong> Split-screen Reel — text question on left, film someone's real reaction on right. Pause 3 seconds before they answer. The silence IS the hook.</div>
+                        <div style="font-size:11px;color:#666;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)"><strong style="color:#888">Inspired by:</strong> r/MadeMeSmile Sunday dinner ritual · 38.9K upvotes · "I cried into my pasta"</div>
+                    </div>
+                    <div class="spark-card" onclick="openCard('3 Hours in a Truck')">
+                        <div style="display:flex;gap:6px;margin-bottom:12px">
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(198,123,92,0.15);color:var(--terracotta)">Deep Truth</span>
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:#888">Storytelling + Blog</span>
+                        </div>
+                        <div class="spark-title" style="font-size:20px;margin-bottom:12px">3 Hours in a Truck</div>
+                        <div style="font-family:'Playfair Display',serif;font-style:italic;color:var(--cream);font-size:15px;line-height:1.6;margin-bottom:14px;padding:14px;background:rgba(232,93,38,0.04);border-left:3px solid var(--terracotta);border-radius:0 8px 8px 0">"He asked his dad one question. They talked for three hours. Sometimes the conversation you've been avoiding is the one that changes everything."</div>
+                        <div style="font-size:12px;color:#AAA;line-height:1.5;margin-bottom:12px"><strong style="color:var(--ember-orange)">Format:</strong> Greenscreen storytelling TikTok (tell the Reddit story to camera, 60-90sec) + long-form blog post on Firepit site. Cross-post extract to Instagram carousel.</div>
+                        <div style="font-size:11px;color:#666;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)"><strong style="color:#888">Inspired by:</strong> r/CasualConversation father conversation · 28.4K upvotes · "I'm still shaking"</div>
+                    </div>
+                </div>
+
+                <!-- 7-DAY CONTENT CALENDAR -->
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:700;margin-bottom:12px">📅 Your 7-Day Content Calendar</div>
+                <div class="schedule-section" style="margin-bottom:36px">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th style="width:50px">Day</th>
+                                <th style="width:80px">Pillar</th>
+                                <th style="width:140px">Format</th>
+                                <th style="width:200px">Hook / Caption</th>
+                                <th>What to Film / Create</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="font-weight:700;color:var(--cream)">Mon</td><td><span style="color:var(--terracotta)">● </span>Question</td><td>POV talking-to-camera</td><td style="color:var(--cream);font-style:italic">"What would 10-year-old you think of who you've become?"</td><td style="color:#AAA">Film yourself asking 3 friends this question. Use their real reactions. Cut between faces. Post the one that hits hardest.</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Tue</td><td><span style="color:var(--gold)">● </span>Spark</td><td>Quote card + Story poll</td><td style="color:var(--cream);font-style:italic">"Sometimes that's all it takes — someone asking how you really are."</td><td style="color:#AAA">Design a warm quote card (ember bg, cream text, Playfair Display). Post to feed + Story with poll: "When did someone last REALLY ask you this?"</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Wed</td><td><span style="color:var(--terracotta)">● </span>Moment</td><td>Street interview Reel</td><td style="color:var(--cream);font-style:italic">"We asked 5 friends: what's the conversation that changed your friendship?"</td><td style="color:#AAA">Grab a friend + phone. Ask 5 people on the street. The pause before they answer IS the content. Edit to 30sec with subtitles.</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Thu</td><td><span style="color:var(--teal)">● </span>Insight</td><td>5-slide carousel</td><td style="color:var(--cream);font-style:italic">"Why we small talk when we want to go deep"</td><td style="color:#AAA">Slide 1: hook question. Slides 2-4: 3 reasons (psychology-backed). Slide 5: "Next time, try this instead:" + Firepit card example. Save-bait format.</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Fri</td><td><span style="color:var(--terracotta)">● </span>Question</td><td>Duet/Stitch challenge</td><td style="color:var(--cream);font-style:italic">"Ask someone: What part of your day makes you lose track of time?"</td><td style="color:#AAA">Stitch a popular "how to make friends" video. Your addition: "Here's the one question that actually works." Film yourself asking it to a colleague in real time.</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Sat</td><td><span style="color:var(--teal)">● </span>Invitation</td><td>IG Story sequence (5 frames)</td><td style="color:var(--cream);font-style:italic">"This weekend, skip the small talk."</td><td style="color:#AAA">Frame 1: "Tonight you're having dinner with someone." Frame 2: "You could talk about the weather." Frame 3: "Or..." Frame 4: Firepit card reveal. Frame 5: "Light the spark. Link in bio."</td></tr>
+                            <tr><td style="font-weight:700;color:var(--cream)">Sun</td><td><span style="color:var(--terracotta)">● </span>Moment</td><td>Long-form blog + TikTok extract</td><td style="color:var(--cream);font-style:italic">"Sunday ritual: one question, one honest answer."</td><td style="color:#AAA">Write 500 words on why Sunday questions work (cite the Reddit pasta story). Extract the best paragraph as a 15-sec TikTok with atmospheric music. Lo-fi, golden hour feel.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- THIS WEEK'S VIBE -->
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:12px">📊 This Week vs Last Week</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+                    <div style="background:rgba(42,42,42,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:16px;text-align:center">
+                        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ember-orange)">↑ 18%</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px">#lonelinessepidemic volume</div>
+                        <div style="font-size:10px;color:#666;margin-top:2px">28M → 33M views</div>
+                    </div>
+                    <div style="background:rgba(42,42,42,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:16px;text-align:center">
+                        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--teal)">63%</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px">Competitor posts = Truth</div>
+                        <div style="font-size:10px;color:#666;margin-top:2px">Up from 51% last week</div>
+                    </div>
+                    <div style="background:rgba(42,42,42,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:16px;text-align:center">
+                        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold)">🔥 14</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px">New Campfire Moments</div>
+                        <div style="font-size:10px;color:#666;margin-top:2px">Reddit + TikTok combined</div>
+                    </div>
+                    <div style="background:rgba(42,42,42,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:16px;text-align:center">
+                        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--terracotta)">↑ #friendshipbreakup</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px">Rising hashtag to watch</div>
+                        <div style="font-size:10px;color:#666;margin-top:2px">7.2M views, ↑ 340% WoW</div>
+                    </div>
+                </div>
+                <div style="background:rgba(212,168,75,0.04);border:1px solid rgba(212,168,75,0.1);border-radius:12px;padding:16px">
+                    <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">This Week's Vibe</div>
+                    <div style="font-size:13px;color:#CCC;line-height:1.6">Culture is leaning into <strong style="color:var(--cream)">vulnerability and friendship grief</strong>. The loneliness conversation grew 18% this week (#lonelinessepidemic 28M → 33M, #friendshipbreakup ↑340%). Competitors are responding — 63% of competitor content this week was Truth-spectrum (up from 51%). <strong style="color:var(--cream)">Firepit should lead with Truth content this week</strong>, particularly around the "friendship recession" angle. The data says depth is winning.</div>
+                </div>
+            </div>
+
+            <!-- THE FEED TAB -->
+            <div class="tab-content" data-tab="feed">
+                <div style="margin-bottom:28px">
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--cream);letter-spacing:-0.5px;margin-bottom:6px">The Feed</h2>
+                    <p style="font-size:13px;color:#999">134 pieces of content from competitors, trending TikTok, and Reddit human truths — sorted by relevance to Firepit.</p>
+                </div>
+
+                <!-- TREND CHART -->
+                <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:28px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:16px">📈 What's Trending Right Now</div>
+                    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px">
+                        <div style="text-align:center;padding:12px;background:rgba(232,93,38,0.06);border-radius:10px;border:1px solid rgba(232,93,38,0.1)">
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ember-orange)">↑ 340%</div>
+                            <div style="font-size:10px;color:#AAA;margin-top:4px">#friendshipbreakup</div>
+                            <div style="font-size:9px;color:#666">7.2M views this week</div>
+                        </div>
+                        <div style="text-align:center;padding:12px;background:rgba(74,155,142,0.06);border-radius:10px;border:1px solid rgba(74,155,142,0.1)">
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--teal)">↑ 180%</div>
+                            <div style="font-size:10px;color:#AAA;margin-top:4px">#conversationstarters</div>
+                            <div style="font-size:9px;color:#666">12M views · 310K saves</div>
+                        </div>
+                        <div style="text-align:center;padding:12px;background:rgba(198,123,92,0.06);border-radius:10px;border:1px solid rgba(198,123,92,0.1)">
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--terracotta)">↑ 95%</div>
+                            <div style="font-size:10px;color:#AAA;margin-top:4px">#lonelinessepidemic</div>
+                            <div style="font-size:9px;color:#666">33M views · WHO report</div>
+                        </div>
+                        <div style="text-align:center;padding:12px;background:rgba(212,168,75,0.06);border-radius:10px;border:1px solid rgba(212,168,75,0.1)">
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold)">↑ 120%</div>
+                            <div style="font-size:10px;color:#AAA;margin-top:4px">#36questions</div>
+                            <div style="font-size:9px;color:#666">15M views · couples trend</div>
+                        </div>
+                        <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06)">
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">NEW</div>
+                            <div style="font-size:10px;color:#AAA;margin-top:4px">#emotionalcheckin</div>
+                            <div style="font-size:9px;color:#666">Emerging · friend groups</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:16px;font-size:12px;color:#888">
+                        <span>🔥 <strong style="color:var(--cream)">Hottest format:</strong> Street interviews asking one deep question</span>
+                        <span>·</span>
+                        <span>📈 <strong style="color:var(--cream)">Rising sound:</strong> Don Toliver "Call Back" for vulnerable confessions</span>
+                        <span>·</span>
+                        <span>💬 <strong style="color:var(--cream)">Reddit signal:</strong> r/AskReddit relationship questions ↑ 40% WoW</span>
+                    </div>
+                </div>
+
+                <div class="feed-controls">
+                    <button class="filter-btn active" onclick="filterFeed('all', this)">All (134)</button>
+                    <button class="filter-btn" onclick="filterFeed('competitor', this)">Competitors (25)</button>
+                    <button class="filter-btn" onclick="filterFeed('reddit', this)">Reddit (29)</button>
+                    <button class="filter-btn" onclick="filterFeed('tiktok', this)">TikTok (80)</button>
+                    <button class="filter-btn" onclick="filterFeed('truth', this)">Truth</button>
+                    <button class="filter-btn" onclick="filterFeed('fun', this)">Fun</button>
+                </div>
+                <div class="feed-grid" id="feedGrid">
+                    <!-- Feed cards populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- THE LAB TAB -->
+            <div class="tab-content" data-tab="lab">
+                <div style="margin-bottom:28px">
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--cream);letter-spacing:-0.5px;margin-bottom:6px">The Lab</h2>
+                    <p style="font-size:14px;color:#999;line-height:1.5">Turn trending content into Firepit hooks and conversation cards. Two tools: hooks for social content, cards for the product.</p>
+                </div>
+
+                <!-- EXEC SUMMARY -->
+                <div style="background:rgba(232,93,38,0.04);border:1px solid rgba(232,93,38,0.12);border-radius:14px;padding:24px;margin-bottom:28px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:14px">🎯 This Week's Biggest Opportunities</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">Street Interview Format is Exploding</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">6 of the top 20 viral posts this week use street interviews. One deep question + stranger reactions = guaranteed engagement. Write 3 hooks for this format.</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">Reddit is Writing Firepit Cards For Free</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">The r/AskReddit "What question changed your relationship?" thread has 14K responses. Each one is a potential card. Mine the top 50 and design a "Community Cards" deck.</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--teal)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">"Friendship Grief" is an Untapped Content Lane</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">#friendshipbreakup ↑340% WoW. Nobody in the card game space is making content for this pain. First mover advantage. Design a "Processing" deck + hooks.</div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#888">💡 <strong style="color:var(--cream)">Quick action:</strong> Pick one opportunity above → use the Hook Writer to draft 5 hooks → film tomorrow → post by Friday.</div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#888;font-weight:600">Choose your tool</div>
+                    <div style="display:flex;gap:4px;background:#222;border-radius:10px;padding:4px">
+                        <button class="lab-mode-btn active" data-mode="cards" onclick="setLabMode('cards')" style="padding:8px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;background:var(--ember);color:white">🃏 Card Designer (85 cards)</button>
+                        <button class="lab-mode-btn" data-mode="hooks" onclick="setLabMode('hooks')" style="padding:8px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:#888">✍️ Hook Writer (13 sets)</button>
+                    </div>
+                </div>
+                <div id="hooksList" style="display:none"></div>
+                <div id="cardsList"></div>
+            </div>
+
+            <!-- THE MAP TAB -->
+            <div class="tab-content" data-tab="map">
+                <div style="margin-bottom:28px">
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--cream);letter-spacing:-0.5px;margin-bottom:6px">The Map</h2>
+                    <p style="font-size:14px;color:#999;line-height:1.5">Where Firepit sits in the competitive landscape, who to partner with, and where the white space opportunities are.</p>
+                </div>
+
+                <!-- STRATEGIC SNAPSHOT -->
+                <div style="background:rgba(232,93,38,0.04);border:1px solid rgba(232,93,38,0.12);border-radius:14px;padding:24px;margin-bottom:28px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:14px">🗺️ Strategic Snapshot</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--teal)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">🎯 White Space: Fun + Deep</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">WNRS and The And own Deep Truth. Hinge and Bumble own Surface Fun. Nobody owns playful depth. Firepit's Truth ↔ Fun spectrum is the moat. Protect and expand it.</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">📈 Growing Trends to Ride</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">#friendshipbreakup ↑340% · #conversationstarters ↑180% · "Platonic life partners" ↑ 5.1M views · Street interview format dominating · Vulnerability content outperforming polish 3:1</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">⚡ Competitors Moving Fast</div>
+                            <div style="font-size:11px;color:#AAA;line-height:1.5">WNRS: Netflix collab + 5-city OOH · The And: S5 parent/child + Spotify integration · Hinge: voice prompts + depth algorithm · Bumble: friendship groups · CAH moving into serious territory</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-grid">
+                    <div class="map-section">
+                        <div class="map-title" style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:4px">Competitive Positioning</div>
+                        <div style="font-size:11px;color:#888;margin-bottom:12px">Where each brand sits on Truth ↔ Fun vs Depth ↔ Surface. Firepit's opportunity: the top-right quadrant.</div>
+                        <div class="positioning-plot" id="positioningPlot"></div>
+                        <div class="plot-label">
+                            <span>TRUTH ←</span>
+                            <span>→ FUN</span>
+                        </div>
+                    </div>
+                    <div class="map-section">
+                        <div class="map-title" style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:4px">Creator Radar — 12 Partnership Targets</div>
+                        <div style="font-size:11px;color:#888;margin-bottom:12px">Micro-creators already making Firepit-adjacent content. Click to view their profiles. DM them today.</div>
+                        <div class="creator-radar" id="creatorRadar"></div>
+                    </div>
+                </div>
+
+                <!-- WHAT TO DO WITH THIS -->
+                <div style="background:rgba(42,37,32,0.6);border:1px solid rgba(212,168,75,0.15);border-radius:14px;padding:24px;margin-top:20px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:14px">⚡ Actions From The Map</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:10px;padding:3px 8px;background:var(--ember-orange);color:white;border-radius:6px;font-weight:700;white-space:nowrap">NOW</span>
+                            <div style="font-size:12px;color:#CCC;line-height:1.5">DM the top 5 creators from the radar above. Use the "Paid promo?" opener. Gift them the app + a brief: "Film yourself and a friend answering one Firepit card."</div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:10px;padding:3px 8px;background:var(--gold);color:white;border-radius:6px;font-weight:700;white-space:nowrap">THIS WEEK</span>
+                            <div style="font-size:12px;color:#CCC;line-height:1.5">Create one piece of "Fun + Deep" content — the white space nobody owns. A playful question that goes somewhere unexpected. Film the reaction.</div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:10px;padding:3px 8px;background:var(--teal);color:white;border-radius:6px;font-weight:700;white-space:nowrap">WATCH</span>
+                            <div style="font-size:12px;color:#CCC;line-height:1.5">The And x Netflix and WNRS x Nike are raising the bar for brand collabs. Start thinking about Firepit's first partnership — cafes, bookshops, retreat centres.</div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:10px;padding:3px 8px;background:var(--terracotta);color:white;border-radius:6px;font-weight:700;white-space:nowrap">DEFEND</span>
+                            <div style="font-size:12px;color:#CCC;line-height:1.5">CAH entering the serious space and Hinge adding depth algorithms means the market is validating Firepit's thesis. Move faster. They have resources. You have soul.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FOUNDERS LAB TAB -->
+            <div class="tab-content" data-tab="founders">
+                <div style="margin-bottom:28px">
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--cream);letter-spacing:-0.5px;margin-bottom:6px">Founders Lab</h2>
+                    <p style="font-size:14px;color:#999;line-height:1.5">Strategic advice from 18 founders who've built what Firepit is building — distilled into what matters right now.</p>
+                </div>
+
+                <!-- FIREPIT COACH — EXEC SUMMARY (moved to top) -->
+                <div style="background:linear-gradient(135deg, #2A2220, #1A1A1A);border:1px solid rgba(232,93,38,0.3);border-radius:16px;padding:32px;position:relative;overflow:hidden;margin-bottom:32px">
+                    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ember-orange),var(--gold),var(--teal))"></div>
+
+                    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+                        <div style="width:48px;height:48px;background:var(--ember-orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 24px rgba(232,93,38,0.3)">🔥</div>
+                        <div>
+                            <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream)">The Firepit Coach</div>
+                            <div style="font-size:11px;color:#888">Synthesising 46 founder insights into what you should do this week</div>
+                        </div>
+                    </div>
+
+                    <!-- TL;DR -->
+                    <div style="padding:16px 20px;background:rgba(232,93,38,0.08);border:1px solid rgba(232,93,38,0.15);border-radius:10px;margin-bottom:20px">
+                        <div style="font-size:10px;color:var(--ember-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">TL;DR — The One Thing That Matters</div>
+                        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);line-height:1.5;font-style:italic">"Every founder in this dashboard agrees: the product isn't the hard part. Distribution is. Build audience → nurture community → then ship product. You're in a loneliness epidemic with perfect timing. The only risk is obscurity."</div>
+                    </div>
+
+                    <!-- 3 Priorities -->
+                    <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎯 Your 3 Priorities This Week</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--ember-orange);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--ember-orange);font-weight:700;margin-bottom:6px">PRIORITY 1</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Film 5 Real Reactions</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">Phone camera. Real people. One Firepit card. Film the moment they answer. Lo-fi wins.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">← Elan Lee, Casey Neistat, Zach Yadegari</div>
+                        </div>
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--gold);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--gold);font-weight:700;margin-bottom:6px">PRIORITY 2</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">DM 50 Micro-Creators</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">"Paid promo? 🔥 We built an app for real conversations. Want to try?" Volume wins.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">← Zach Yadegari, Greg Isenberg</div>
+                        </div>
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--teal);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--teal);font-weight:700;margin-bottom:6px">PRIORITY 3</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Host 1 Firepit Evening</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">A cafe. 15 people. Conversation cards. Film it. One event feeds a month of content.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">← Nick Jones, River, IRL Movement</div>
+                        </div>
+                    </div>
+
+                    <!-- Patterns -->
+                    <div style="font-size:11px;color:var(--terracotta);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🧠 4 Patterns From 18 Founders</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px">
+                        <div style="padding:12px;background:rgba(42,42,42,0.4);border-radius:8px;border-left:3px solid var(--terracotta);font-size:12px;color:#CCC;line-height:1.4"><strong style="color:var(--cream)">Community first, product second.</strong> WNRS, Soho House, and Exploding Kittens all built community before product.</div>
+                        <div style="padding:12px;background:rgba(42,42,42,0.4);border-radius:8px;border-left:3px solid var(--teal);font-size:12px;color:#CCC;line-height:1.4"><strong style="color:var(--cream)">Creators don't know Firepit exists.</strong> @therapyjeff, @honestconvos, @datenightideas — they're making content about what you solve.</div>
+                        <div style="padding:12px;background:rgba(42,42,42,0.4);border-radius:8px;border-left:3px solid var(--gold);font-size:12px;color:#CCC;line-height:1.4"><strong style="color:var(--cream)">Reddit proves the demand.</strong> 14K people answered "What question changed your relationship?" — 52K upvotes. They're writing your cards.</div>
+                        <div style="padding:12px;background:rgba(42,42,42,0.4);border-radius:8px;border-left:3px solid var(--ember-orange);font-size:12px;color:#CCC;line-height:1.4"><strong style="color:var(--cream)">"Fun + Deep" is empty.</strong> WNRS = Deep Truth. Hinge = Surface Fun. Nobody owns playful depth. That's Firepit's moat.</div>
+                    </div>
+
+                    <!-- Required Reading -->
+                    <div style="font-size:11px;color:#AAA;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📚 This Week's Required Reading</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                        <a href="https://tim.blog/2023/02/03/elan-lee/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(42,42,42,0.4);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='rgba(42,42,42,0.4)'"><span>🎧</span><div style="flex:1;font-size:11px;color:var(--cream)">Tim Ferriss x Elan Lee — Turning Fans into Superfans</div><span style="color:var(--ember-orange)">↗</span></a>
+                        <a href="https://www.microempires.cc/p/cal-ai" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(42,42,42,0.4);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='rgba(42,42,42,0.4)'"><span>📖</span><div style="flex:1;font-size:11px;color:var(--cream)">Micro Empires — Cal AI's $1M MRR Playbook</div><span style="color:var(--ember-orange)">↗</span></a>
+                        <a href="https://www.digitalcampfires.co/recaps/how-a-game-exploded-into-a-global-movement" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(42,42,42,0.4);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='rgba(42,42,42,0.4)'"><span>🔥</span><div style="flex:1;font-size:11px;color:var(--cream)">Digital Campfires — How WNRS Became a Movement</div><span style="color:var(--ember-orange)">↗</span></a>
+                        <a href="https://justingarydesign.substack.com/p/elan-lee-building-exploding-kittens" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(42,42,42,0.4);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='rgba(42,42,42,0.4)'"><span>📖</span><div style="flex:1;font-size:11px;color:var(--cream)">Justin Gary — Marketing as Design with Elan Lee</div><span style="color:var(--ember-orange)">↗</span></a>
+                    </div>
+                </div>
+
+                <!-- SECTION DIVIDER -->
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#666;font-weight:600;margin-bottom:16px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04)">📋 Full Founder Insights — Scroll to explore all 46 cards</div>
+
+                <!-- ELAN LEE / EXPLODING KITTENS -->
+                <div style="margin-bottom:32px;animation:cardEnter 0.4s cubic-bezier(0.4,0,0.2,1) 0.1s both">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                        <div style="width:40px;height:40px;background:var(--ember-orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;transition:all 0.3s;box-shadow:0 0 0 rgba(232,93,38,0)" onmouseover="this.style.boxShadow='0 0 20px rgba(232,93,38,0.4)';this.style.transform='scale(1.1)'" onmouseout="this.style.boxShadow='0 0 0 rgba(232,93,38,0)';this.style.transform='scale(1)'">EL</div>
+                        <div>
+                            <div style="font-weight:600;color:var(--cream)">Elan Lee — Exploding Kittens</div>
+                            <div style="font-size:11px;color:var(--text-muted)"><a href="https://tiktok.com/@explodingkittens" target="_blank" style="color:var(--ember-orange);text-decoration:none">@explodingkittens</a> · <a href="https://tiktok.com/@mrelanlee" target="_blank" style="color:var(--ember-orange);text-decoration:none">@mrelanlee</a> · <a href="https://x.com/elanlee" target="_blank" style="color:var(--ember-orange);text-decoration:none">@elanlee</a></div>
+                        </div>
+                    </div>
+                    <div id="elanInsights" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px"></div>
+                </div>
+
+                <!-- KOREEN ODINEY / WNRS -->
+                <div style="margin-bottom:32px;animation:cardEnter 0.4s cubic-bezier(0.4,0,0.2,1) 0.2s both">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                        <div style="width:40px;height:40px;background:var(--terracotta);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;transition:all 0.3s" onmouseover="this.style.boxShadow='0 0 20px rgba(198,123,92,0.4)';this.style.transform='scale(1.1)'" onmouseout="this.style.boxShadow='none';this.style.transform='scale(1)'">KO</div>
+                        <div>
+                            <div style="font-weight:600;color:var(--cream)">Koreen Odiney — We're Not Really Strangers</div>
+                            <div style="font-size:11px;color:var(--text-muted)"><a href="https://tiktok.com/@werenotreallystrangers" target="_blank" style="color:var(--terracotta);text-decoration:none">@werenotreallystrangers</a></div>
+                        </div>
+                    </div>
+                    <div id="koreenInsights" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px"></div>
+                </div>
+
+                <!-- MORE FOUNDERS -->
+                <div style="margin-bottom:32px;animation:cardEnter 0.4s cubic-bezier(0.4,0,0.2,1) 0.3s both">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                        <div style="width:40px;height:40px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;transition:all 0.3s" onmouseover="this.style.boxShadow='0 0 20px rgba(74,155,142,0.4)';this.style.transform='scale(1.1)'" onmouseout="this.style.boxShadow='none';this.style.transform='scale(1)'">+</div>
+                        <div>
+                            <div style="font-weight:600;color:var(--cream)">More Founders & Thinkers</div>
+                            <div style="font-size:11px;color:var(--text-muted)">Cross-industry wisdom for building Firepit</div>
+                        </div>
+                    </div>
+                    <div id="moreFounders" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px"></div>
+                </div>
+
+                <!-- FIREPIT ACTION ITEMS -->
+                <div style="background:#2A2520;border:1px solid rgba(232,93,38,0.2);border-radius:12px;padding:24px;margin-bottom:32px">
+                    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:16px">🔥 What This Means for Firepit</div>
+                    <div id="firepitActions"></div>
+                </div>
+
+                <!-- OLD COACH CONTENT REMOVED — now at top of tab -->
+                <!-- Keeping just a clean closing div -->
+                <div style="display:none"><!-- placeholder -->
+                        <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);line-height:1.6;margin-bottom:12px;font-style:italic">"You're building a connection product in the middle of a loneliness epidemic. The timing is perfect. But timing doesn't win — execution does. Here's what the founders who've done this are telling you."</div>
+                        <div style="font-size:13px;color:#BBB;line-height:1.7">
+                            <p style="margin-bottom:12px">Every founder in this dashboard — from Elan Lee to Nick Jones to Zach Yadegari — converges on the same truth: <strong style="color:var(--cream)">the product is never the hard part. Distribution is.</strong> Elan spends 80% on discovery. Zach sent thousands of DMs. Koreen built community for years before shipping a card game. Soho House grew city by city through word of mouth.</p>
+                            <p style="margin-bottom:12px">Right now, Firepit's biggest risk isn't the app. It's obscurity. The playbook is clear: <strong style="color:var(--cream)">build audience → nurture community → then ship product.</strong> Greg Isenberg's ACP framework. Koreen's Instagram-first approach. Kevin Systrom hiring a community manager before an engineer.</p>
+                            <p>The cultural moment is yours. #lonelinessepidemic at 28M views. #connectiontok growing. The "friendship recession" conversation exploding. People are actively searching for what you're building. The question isn't whether they want it — it's whether they'll find it.</p>
+                        </div>
+                    </div>
+
+                    <!-- Top 3 Priorities -->
+                    <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎯 Your 3 Priorities This Week</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--ember-orange);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--ember-orange);font-weight:700;margin-bottom:6px">PRIORITY 1</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Film 5 Real Reactions</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">Phone camera. Real people. One Firepit card. Film the moment they answer. Lo-fi wins. This is your first week of content.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Elan Lee, Casey Neistat, Zach Yadegari</div>
+                        </div>
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--gold);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--gold);font-weight:700;margin-bottom:6px">PRIORITY 2</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">DM 50 Micro-Creators</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">Use the Creator Radar. "Paid promo? 🔥 We built an app for real conversations. Want to try?" Volume wins. Most quit after 10. Send 50.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Zach Yadegari, Greg Isenberg</div>
+                        </div>
+                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--teal);border-radius:10px;padding:16px">
+                            <div style="font-size:10px;color:var(--teal);font-weight:700;margin-bottom:6px">PRIORITY 3</div>
+                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Host 1 Firepit Evening</div>
+                            <div style="font-size:11px;color:#888;line-height:1.5">A cafe. 10-15 people. Conversation cards. Film with permission. One real event feeds a month of content and seeds the community.</div>
+                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Nick Jones, River, IRL Community Movement</div>
+                        </div>
+                    </div>
+
+                    <!-- Pattern Recognition -->
+                    <div style="font-size:11px;color:var(--terracotta);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🧠 Patterns the Coach is Seeing</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px">
+                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--terracotta)">
+                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">Every successful connection brand started with community, not product</div>
+                            <div style="font-size:11px;color:#888">WNRS: Instagram first, cards second. Soho House: local committees first, clubs second. Exploding Kittens: Kickstarter community first, retail second.</div>
+                        </div>
+                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--teal)">
+                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">The creators making Firepit-adjacent content don't know Firepit exists yet</div>
+                            <div style="font-size:11px;color:#888">@therapyjeff, @honestconvos, @datenightideas, @friendshiptherapy — they're all making content about what Firepit solves. They should be using it.</div>
+                        </div>
+                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--gold)">
+                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">Reddit proves the demand. 14K people answered "What question changed your relationship?"</div>
+                            <div style="font-size:11px;color:#888">People are writing Firepit cards without knowing it. The product-market fit isn't theoretical — it's in 52K upvotes on a single AskReddit thread.</div>
+                        </div>
+                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--ember-orange)">
+                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">The "Fun + Deep" quadrant is empty. That's Firepit's white space.</div>
+                            <div style="font-size:11px;color:#888">WNRS is Deep Truth. Hinge is Surface Fun. Nobody owns playful depth. Firepit's Truth ↔ Fun spectrum is the strategic moat. Protect it.</div>
+                        </div>
+                    </div>
+
+                    <!-- What to Read/Watch -->
+                    <div style="font-size:11px;color:var(--cream);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📚 Required Reading This Week</div>
+                    <div style="display:grid;gap:8px">
+                        <a href="https://tim.blog/2023/02/03/elan-lee/" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
+                            <span style="font-size:16px">🎧</span>
+                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Tim Ferriss #653: Elan Lee — How to Turn Fans into Superfans</div><div style="font-size:10px;color:#888">2hr 15min · The Exploding Kittens masterclass</div></div>
+                            <span style="color:var(--ember-orange)">↗</span>
+                        </a>
+                        <a href="https://justingarydesign.substack.com/p/elan-lee-building-exploding-kittens" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
+                            <span style="font-size:16px">📖</span>
+                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Justin Gary Design #91: Marketing as Design with Elan Lee</div><div style="font-size:10px;color:#888">45min read · Why marketers have veto power at Exploding Kittens</div></div>
+                            <span style="color:var(--ember-orange)">↗</span>
+                        </a>
+                        <a href="https://www.microempires.cc/p/cal-ai" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
+                            <span style="font-size:16px">📖</span>
+                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Micro Empires: How a 17-Year-Old Scaled Cal AI to $1M MRR</div><div style="font-size:10px;color:#888">15min read · The micro-influencer DM playbook</div></div>
+                            <span style="color:var(--ember-orange)">↗</span>
+                        </a>
+                        <a href="https://www.digitalcampfires.co/recaps/how-a-game-exploded-into-a-global-movement" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
+                            <span style="font-size:16px">🔥</span>
+                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Digital Campfires: How WNRS Exploded into a Global Movement</div><div style="font-size:10px;color:#888">20min read · Koreen Odiney's community-first playbook</div></div>
+                            <span style="color:var(--ember-orange)">↗</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- RIGHT PANEL -->
+        <aside class="right-panel">
+            <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);margin-bottom:4px">Firepit Lens</div>
+            <div style="font-size:11px;color:#666;margin-bottom:24px">Click any card to analyze</div>
+            <div style="padding:16px;background:rgba(232,93,38,0.04);border:1px solid rgba(232,93,38,0.1);border-radius:10px;margin-bottom:16px">
+                <div style="font-size:10px;color:var(--ember-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Quick Stats</div>
+                <div style="font-size:24px;font-family:'Playfair Display',serif;font-weight:700;color:var(--cream)">134</div>
+                <div style="font-size:11px;color:#888">content pieces tracked</div>
+            </div>
+            <div style="padding:16px;background:rgba(212,168,75,0.04);border:1px solid rgba(212,168,75,0.1);border-radius:10px;margin-bottom:16px">
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Campfire Moments</div>
+                <div style="font-size:24px;font-family:'Playfair Display',serif;font-weight:700;color:var(--cream)">14</div>
+                <div style="font-size:11px;color:#888">posts that embody Firepit</div>
+            </div>
+            <div style="padding:16px;background:rgba(198,123,92,0.04);border:1px solid rgba(198,123,92,0.1);border-radius:10px">
+                <div style="font-size:10px;color:var(--terracotta);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">This Week's Vibe</div>
+                <div style="font-size:13px;color:#AAA;line-height:1.5">Culture is leaning into vulnerability. The loneliness conversation is growing. Firepit should lead with Truth content this week.</div>
+            </div>
+        </aside>
+
+        <!-- BOTTOM TRAY -->
+        <footer class="bottom-tray">
+            <div class="tray-status">
+                <div class="tray-stat">
+                    <span class="tray-stat-label">Active</span>
+                    <span class="tray-stat-value">3</span>
+                </div>
+                <div class="tray-stat">
+                    <span class="tray-stat-label">Today</span>
+                    <span class="tray-stat-value">47</span>
+                </div>
+                <div class="tray-stat">
+                    <span class="tray-stat-label">This Week</span>
+                    <span class="tray-stat-value">286</span>
+                </div>
+            </div>
+            <div class="tray-actions">
+                <button class="tray-btn" onclick="startNewConversation()">+ New Spark</button>
+                <button class="tray-btn" onclick="openSettings()">Settings</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-title" id="modalTitle">Spark Details</div>
+            <div class="modal-text" id="modalText">Loading details...</div>
+        </div>
+    </div>
+
+    <script>
+        // DATA — Real Firepit competitive intelligence
+        const feedItems = [
+            // COMPETITORS — WNRS
+            { source: 'Competitor', content: 'POV: You finally ask the question you\'ve been scared to ask — and they answer honestly 🥺', category: 'Truth', competitor: true, brand: 'WNRS', views: '2.4M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Rate your relationship 1-10. Now tell them why it\'s not a 10. That\'s where the growth is.', category: 'Truth', competitor: true, brand: 'WNRS', views: '3.1M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Tag someone who needs to hear this: "You don\'t have to earn rest."', category: 'Truth', competitor: true, brand: 'WNRS', views: '890K', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'We gave 100 strangers conversation cards. What happened next broke the internet.', category: 'Truth', competitor: true, brand: 'WNRS', views: '2.8M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'WNRS launches "Couples Therapy" deck — "for before you need actual therapy"', category: 'Truth', competitor: true, brand: 'WNRS', views: '3.8M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'WNRS TikTok LIVE: 50K people watching couples answer questions in real time', category: 'Truth', competitor: true, brand: 'WNRS', views: '50K live', platform: 'TikTok', url: 'https://tiktok.com' },
+            // COMPETITORS — Hinge
+            { source: 'Competitor', content: 'The prompt that gets the most likes on Hinge right now? "I\'m convinced that..."', category: 'Fun', competitor: true, brand: 'Hinge', views: '1.8M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'First date energy check: are you performing or connecting?', category: 'Truth', competitor: true, brand: 'Hinge', views: '920K', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Hinge releases "Most Overused Prompts" data — and roasts users lovingly', category: 'Fun', competitor: true, brand: 'Hinge', views: '2.3M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Hinge "Voice Prompt" feature — hear someone before you match', category: 'Fun', competitor: true, brand: 'Hinge', views: '2.7M', platform: 'TikTok', url: 'https://tiktok.com' },
+            // COMPETITORS — The And
+            { source: 'Competitor', content: '50 couples: "What\'s the one thing you\'ve never told me?" The answers will break you.', category: 'Truth', competitor: true, brand: 'The And', views: '5.2M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'The And Season 5 trailer: parents and adult children asking the hard questions', category: 'Truth', competitor: true, brand: 'The And', views: '3.2M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'The And partners with Netflix for "Questions Between Us" short film series', category: 'Truth', competitor: true, brand: 'The And', views: '8.4M', platform: 'Instagram', url: 'https://tiktok.com/@theand_official' },
+            // COMPETITORS — Bumble / Vertellis / CAH
+            { source: 'Competitor', content: 'Friendship in your 30s hits different. Here\'s your sign to text that person back.', category: 'Truth', competitor: true, brand: 'Bumble BFF', views: '420K', platform: 'Instagram', url: 'https://tiktok.com/@bumble' },
+            { source: 'Competitor', content: 'Bumble drops "Delusional Dating" quiz — 6.1M views and counting', category: 'Fun', competitor: true, brand: 'Bumble', views: '6.1M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Vertellis schools edition — 500 schools now using conversation cards in classrooms', category: 'Truth', competitor: true, brand: 'Vertellis', views: '290K', platform: 'Instagram', url: 'https://instagram.com/vertellis' },
+            { source: 'Competitor', content: 'Cards Against Humanity "Deep Sh*t" — their first serious expansion', category: 'Fun', competitor: true, brand: 'CAH', views: '1.4M', platform: 'TikTok', url: 'https://tiktok.com' },
+            // CATEGORY PULSE — TikTok trends
+            { source: 'TikTok', content: 'The reason you can\'t have deep conversations isn\'t because you\'re bad at them. It\'s because you were never shown it was safe.', category: 'Truth', competitor: false, brand: '@therapyjeff', views: '4.8M', platform: 'TikTok', url: 'https://tiktok.com/@therapyjeff' },
+            { source: 'TikTok', content: 'Would you rather: know what everyone thinks of you OR never have an awkward silence again?', category: 'Fun', competitor: false, brand: '@kaithecoach', views: '2.1M', platform: 'TikTok', url: 'https://tiktok.com/@kaithecoach' },
+            { source: 'TikTok', content: 'The loneliness epidemic is killing more people than smoking. And nobody\'s talking about it.', category: 'Truth', competitor: false, brand: '@shityoushouldcareabout', views: '8.9M', platform: 'TikTok', url: 'https://tiktok.com/@shityoushouldcareabout' },
+            { source: 'TikTok', content: 'We replaced our phones with conversation cards for a week. Here\'s what happened to our marriage.', category: 'Truth', competitor: false, brand: '@datenightideas', views: '3.4M', platform: 'TikTok', url: 'https://tiktok.com/@datenightideas' },
+            { source: 'TikTok', content: 'Conversation starters that actually work when your brain goes blank 🧵', category: 'Fun', competitor: false, brand: '@socialanxietysupport', views: '1.5M', platform: 'TikTok', url: 'https://tiktok.com/@socialanxietysupport' },
+            { source: 'TikTok', content: '36 questions to fall in love — we tried it after 8 years of marriage. Question 14 destroyed us.', category: 'Truth', competitor: false, brand: '@couplegoals', views: '6.2M', platform: 'TikTok', url: 'https://tiktok.com/@couplegoals' },
+            { source: 'TikTok', content: '"Micro-vulnerability" is the new relationship advice trend — one small truth per day', category: 'Truth', competitor: false, brand: '@attachmenttheory', views: '3.2M', platform: 'TikTok', url: 'https://tiktok.com/@attachmenttheory' },
+            { source: 'TikTok', content: 'The "No Phone Zone" dinner trend is exploding on couples TikTok', category: 'Fun', competitor: false, brand: 'Trending', views: '4.5M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'Gen Z is choosing "platonic life partners" over romantic ones', category: 'Fun', competitor: false, brand: '@moderndating', views: '5.1M', platform: 'TikTok', url: 'https://tiktok.com/@moderndating' },
+            { source: 'TikTok', content: '"Friendship breakups are harder than romantic ones" — the internet agrees', category: 'Truth', competitor: false, brand: '@griefcoach', views: '7.2M', platform: 'TikTok', url: 'https://tiktok.com/@griefcoach' },
+            { source: 'TikTok', content: 'The "green flag" trend is replacing "red flag" discourse', category: 'Fun', competitor: false, brand: 'Trending', views: '12M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'The "ask your partner" split-screen trend — same question, different answers', category: 'Fun', competitor: false, brand: 'Trending', views: '5.4M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            // TIKTOK VIRAL
+            { source: 'TikTok', content: 'I asked my dad the question I\'ve been scared to ask for 20 years. His answer changed everything.', category: 'Truth', competitor: false, brand: '@honestconvos', views: '12M', platform: 'TikTok', url: 'https://tiktok.com/@honestconvos' },
+            { source: 'TikTok', content: 'The friendship recession is real. Here\'s why your 30s feel so lonely.', category: 'Truth', competitor: false, brand: '@friendshiptherapy', views: '5.6M', platform: 'TikTok', url: 'https://tiktok.com/@friendshiptherapy' },
+            { source: 'TikTok', content: 'POV: You pull out conversation cards on a first date and they think you\'re weird... then 3 hours pass.', category: 'Fun', competitor: false, brand: '@datenight.ideas', views: '3.8M', platform: 'TikTok', url: 'https://tiktok.com/@datenight.ideas' },
+            { source: 'TikTok', content: 'Teacher asks class "what do you wish adults knew about being a kid right now?" — 9-year-olds deliver.', category: 'Truth', competitor: false, brand: '@realteachertalk', views: '14M', platform: 'TikTok', url: 'https://tiktok.com/@realteachertalk' },
+            { source: 'TikTok', content: 'Elderly couple plays "how well do you know me?" after 52 years. They get everything wrong. And laugh.', category: 'Fun', competitor: false, brand: '@loveafter50', views: '9.1M', platform: 'TikTok', url: 'https://tiktok.com/@loveafter50' },
+            { source: 'TikTok', content: 'Man asks strangers: "When was the last time you cried?" Every single person pauses.', category: 'Truth', competitor: false, brand: '@streethonesty', views: '6.3M', platform: 'TikTok', url: 'https://tiktok.com/@streethonesty' },
+            { source: 'TikTok', content: '"What I wish I said" — people rewriting their biggest conversations', category: 'Truth', competitor: false, brand: '@unsaidwords', views: '5.8M', platform: 'TikTok', url: 'https://tiktok.com/@unsaidwords' },
+            { source: 'TikTok', content: 'My grandma asked me to teach her how to have deep conversations. She\'s 82.', category: 'Truth', competitor: false, brand: '@generationgap_', views: '7.8M', platform: 'TikTok', url: 'https://tiktok.com/@generationgap_' },
+            { source: 'TikTok', content: '"Ask your immigrant parents about their dreams" is making everyone cry', category: 'Truth', competitor: false, brand: '@firstgenfeels', views: '7.5M', platform: 'TikTok', url: 'https://tiktok.com/@firstgenfeels' },
+            { source: 'TikTok', content: 'The "honesty hour" trend — one hour where nobody can deflect, joke, or change the subject', category: 'Truth', competitor: false, brand: 'Trending', views: '4.3M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            // REDDIT HUMAN TRUTHS
+            { source: 'Reddit', content: 'I\'m 34 and just had my first real conversation with my father. Not about work, not about sports. About his fears. About mine. We sat in his truck for three hours.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '28.4K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'My wife and I have been together 12 years. Last night we played a question game and she told me something she\'d never told anyone. Twelve years and she still surprised me.', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '41.2K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            { source: 'Reddit', content: 'What\'s one question that completely changed a relationship for you? Top: "What do you wish I asked you more often?" / "When was the last time you felt truly seen?"', category: 'Truth', competitor: false, brand: 'r/AskReddit · 14K responses', views: '52K ↑', platform: 'Reddit', url: 'https://reddit.com/r/AskReddit' },
+            { source: 'Reddit', content: 'My roommate and I cook dinner every Sunday and ask one deep question. "What would 10-year-old you think of you now?" I started crying. She started crying. Then we ate pasta.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '38.9K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'Every conversation, I ask ONE real follow-up question. "How\'s work?" becomes "What part of your day makes you lose track of time?" People light up. Nobody asks them real questions.', category: 'Truth', competitor: false, brand: 'r/DecidingToBeBetter', views: '22.8K ↑', platform: 'Reddit', url: 'https://reddit.com/r/DecidingToBeBetter' },
+            { source: 'Reddit', content: 'The barista asked "no really, how ARE you?" and I burst into tears. Not because I\'m sad. Because someone noticed. Sometimes that\'s all it takes.', category: 'Truth', competitor: false, brand: 'r/self', views: '31.5K ↑', platform: 'Reddit', url: 'https://reddit.com/r/self' },
+            { source: 'Reddit', content: 'Every night before bed my husband asks "what was beautiful today?" It started as a joke. Five years later we\'ve never missed a night.', category: 'Truth', competitor: false, brand: 'r/relationship_advice', views: '33K ↑', platform: 'Reddit', url: 'https://reddit.com/r/relationship_advice' },
+            { source: 'Reddit', content: 'I started eating lunch with the quiet kid at work. I asked "what are you reading?" Now we have lunch every day. He was just waiting for someone to ask.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '24K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'My 6-year-old said "Daddy, when you were little, who made you feel safe?" I had to leave the room. Because the answer was nobody. And the fact that she asked means I\'m doing something right.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '42K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'We haven\'t spoken in 4 years. I called and said "Do you remember the summer we built that treehouse?" He was quiet. Then: "Every single day." We talked for two hours.', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '29K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            { source: 'Reddit', content: 'The "5 questions" that saved my marriage: What made you feel loved today? What hurt? What do you need from me tomorrow? What are you afraid to tell me? What are you grateful for about us?', category: 'Truth', competitor: false, brand: 'r/relationship_advice', views: '38K ↑', platform: 'Reddit', url: 'https://reddit.com/r/relationship_advice' },
+            { source: 'Reddit', content: 'My teenage son hasn\'t voluntarily spoken at dinner in 2 years. His school does "question of the day." Last night he answered. He talked for 20 minutes. One question.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '44K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'She has early-stage dementia. Every Sunday I ask her one question about her life. "What\'s the bravest thing you ever did?" She said marrying my grandfather. She\'d told me three times. I recorded it three times.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '22K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'I replaced "I\'m fine" with the truth for 30 days. I lost two friends. I deepened six. And I finally feel like people actually know me. The math works out.', category: 'Truth', competitor: false, brand: 'r/DecidingToBeBetter', views: '31K ↑', platform: 'Reddit', url: 'https://reddit.com/r/DecidingToBeBetter' },
+            { source: 'Reddit', content: 'The taxi driver looked at me and said "You look like someone who needs to be asked how they\'re doing. So — how are you doing? For real." I told a complete stranger everything.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '31.5K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'My grandmother is 94. I asked what she wished she\'d done more of. She didn\'t say travel. She said "I wish I\'d asked people harder questions. The easy ones waste everyone\'s time."', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '36K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            // MORE COMPETITORS
+            { source: 'Competitor', content: 'WNRS "Self-Reflection" expansion — solo-play questions you ask yourself. Journaling meets card game.', category: 'Truth', competitor: true, brand: 'WNRS', views: '1.6M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'WNRS "Honest Dating" billboards in 5 cities — "When was the last time you were honest on a date?"', category: 'Truth', competitor: true, brand: 'WNRS', views: '4.7M impressions', platform: 'OOH', url: 'https://tiktok.com/@werenotreallystrangers' },
+            { source: 'Competitor', content: 'The And launches "Friends Edition" — first non-couples product. Friends sitting face to face.', category: 'Truth', competitor: true, brand: 'The And', views: '980K', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Hinge "Most Compatible" now uses conversation depth, not just swipes', category: 'Fun', competitor: true, brand: 'Hinge', views: '1.2M', platform: 'TikTok', url: 'https://tiktok.com' },
+            { source: 'Competitor', content: 'Bumble BFF "Friendship Dates" — structured activities for new adult friendships', category: 'Fun', competitor: true, brand: 'Bumble BFF', views: '340K', platform: 'Instagram', url: 'https://tiktok.com/@bumble' },
+            { source: 'Competitor', content: 'Vertellis x Airbnb Experiences — pay to attend hosted conversation card evenings with strangers', category: 'Truth', competitor: true, brand: 'Vertellis', views: '220K', platform: 'Instagram', url: 'https://instagram.com/vertellis' },
+            { source: 'Competitor', content: 'CAH "Family Edition" outsells original for first time. Families want shared experiences.', category: 'Fun', competitor: true, brand: 'CAH', views: '890K', platform: 'Instagram', url: 'https://tiktok.com/@cardsagainsthumanity' },
+            { source: 'Competitor', content: 'Bumble "Opening Moves" — women set the conversation topic, not just start it', category: 'Fun', competitor: true, brand: 'Bumble', views: '1.9M', platform: 'TikTok', url: 'https://tiktok.com' },
+            // MORE CATEGORY
+            { source: 'TikTok', content: 'My therapist told me to stop asking "how are you" and start asking "what\'s alive in you right now?"', category: 'Truth', competitor: false, brand: '@mindful.moments', views: '3.8M', platform: 'TikTok', url: 'https://tiktok.com/@mindful.moments' },
+            { source: 'TikTok', content: 'The "10 Game" is trending — count 1-10 alternating. Simple mechanic, creates eye contact and laughter.', category: 'Fun', competitor: false, brand: 'Trending', views: '12M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'POV: your friend group does "highs and lows" at every dinner. The groups that last make space for both.', category: 'Truth', competitor: false, brand: '@friendshiptherapy', views: '2.6M', platform: 'TikTok', url: 'https://tiktok.com/@friendshiptherapy' },
+            { source: 'TikTok', content: 'Don Toliver "Call Back" is fueling vulnerable storytelling TikToks — music as permission to feel', category: 'Fun', competitor: false, brand: 'Trending Sound', views: '180M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: '"What are you NOT talking about?" — new therapy trend. Avoidance as content.', category: 'Truth', competitor: false, brand: '@therapytok', views: '2.8M', platform: 'TikTok', url: 'https://tiktok.com/@therapytok' },
+            { source: 'TikTok', content: '"Soft-launch your feelings" — screenshots of almost-sent texts, almost-asked questions', category: 'Fun', competitor: false, brand: 'Trending', views: '2.4M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'Morning coffee check-in videos between long-distance friends. Just being present together.', category: 'Truth', competitor: false, brand: '@longdistancefriendship', views: '2.9M', platform: 'TikTok', url: 'https://tiktok.com/@longdistancefriendship' },
+            { source: 'TikTok', content: '"Main character energy" being replaced by "supporting character energy" — community over ego', category: 'Fun', competitor: false, brand: '@culturecritique', views: '4.8M', platform: 'TikTok', url: 'https://tiktok.com/@culturecritique' },
+            // MORE TIKTOK VIRAL
+            { source: 'TikTok', content: 'Grandparents react to Gen Z conversation cards. The culture clash is funny. The understanding is beautiful.', category: 'Fun', competitor: false, brand: '@generationbridge', views: '11M', platform: 'TikTok', url: 'https://tiktok.com/@generationbridge' },
+            { source: 'TikTok', content: '"Ask your immigrant parents about their dreams before they immigrated." Tears every time.', category: 'Truth', competitor: false, brand: '@firstgenfeels', views: '7.5M', platform: 'TikTok', url: 'https://tiktok.com/@firstgenfeels' },
+            { source: 'TikTok', content: 'The "3am conversation" aesthetic — lo-fi, dark, intimate. Friends talking about real stuff. Authenticity IS the aesthetic.', category: 'Truth', competitor: false, brand: 'Trending aesthetic', views: '8.9M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'Things my therapist said that rewired my brain about relationships: "You\'re not too much. You just haven\'t found your enough."', category: 'Truth', competitor: false, brand: '@healing.loudly', views: '8.4M', platform: 'TikTok', url: 'https://tiktok.com/@healing.loudly' },
+            { source: 'TikTok', content: '"What\'s your earliest memory?" trend is making people sob. Simple question, devastating answers.', category: 'Truth', competitor: false, brand: 'Trending', views: '180M combined', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'Couples therapy homework: "What do you need from me this week?" Filming honest answers. Raw and real.', category: 'Truth', competitor: false, brand: '@couplegoalstherapy', views: '4.1M', platform: 'TikTok', url: 'https://tiktok.com/@couplegoalstherapy' },
+            { source: 'TikTok', content: '"Phone a Friend" challenge — call someone and ask them one real question. The surprise on both faces is the content.', category: 'Fun', competitor: false, brand: 'Trending', views: '6.7M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: '"My immigrant parents tried conversation cards for the first time." Cultural barrier + vulnerability = emotional dynamite.', category: 'Truth', competitor: false, brand: '@firstgenfeels', views: '8.3M', platform: 'TikTok', url: 'https://tiktok.com/@firstgenfeels' },
+            // MORE REDDIT
+            { source: 'Reddit', content: 'Every night before bed my husband asks "what was beautiful today?" Five years later we\'ve never missed a night. Some days the answer is just "the coffee was good."', category: 'Truth', competitor: false, brand: 'r/relationship_advice', views: '33K ↑', platform: 'Reddit', url: 'https://reddit.com/r/relationship_advice' },
+            { source: 'Reddit', content: 'I started eating lunch with the quiet kid at work. Asked "what are you reading?" Now we have lunch every day. He was just waiting for someone to ask.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '24K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'My 6-year-old said "Daddy, when you were little, who made you feel safe?" I had to leave the room. Because the answer was nobody. And the fact that she asked means I\'m doing something right.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '42K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'Haven\'t spoken in 4 years. Called and said "Do you remember the summer we built that treehouse?" He was quiet. "Every single day." We talked for two hours.', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '29K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            { source: 'Reddit', content: 'The "5 questions" that saved my marriage: What made you feel loved today? What hurt? What do you need from me tomorrow? What are you afraid to tell me? What are you grateful for about us?', category: 'Truth', competitor: false, brand: 'r/relationship_advice', views: '38K ↑', platform: 'Reddit', url: 'https://reddit.com/r/relationship_advice' },
+            { source: 'Reddit', content: 'My teenage son hasn\'t voluntarily spoken at dinner in 2 years. His school does "question of the day." Last night he answered. Talked for 20 minutes. One question.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '44K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'She has early-stage dementia. Every Sunday I ask one question. "What\'s the bravest thing you ever did?" She said marrying my grandfather. She\'d told me three times. I recorded it three times.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '22K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'What\'s a question you\'re afraid to ask because you might not like the answer? Top: "Am I a good parent?" / "Does my best friend actually like me?" / "Am I living my life or someone else\'s?"', category: 'Truth', competitor: false, brand: 'r/AskReddit · 18K responses', views: '61K ↑', platform: 'Reddit', url: 'https://reddit.com/r/AskReddit' },
+            { source: 'Reddit', content: 'My autistic son asked his first "why" question at age 8. He looked at the sunset and said "Why is it pretty?" I\'ve been waiting eight years for any question. His first was about beauty.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '35K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'I kept a journal of every real conversation I had this year. 47 entries. Forty-seven in 365 days. The weeks that had one were my best weeks.', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '27K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            { source: 'Reddit', content: 'The question that ended a 15-year friendship: "Do you actually enjoy spending time with me, or is this just habit?" The silence told me everything. Now I have friends who\'d answer in a heartbeat.', category: 'Truth', competitor: false, brand: 'r/self', views: '19K ↑', platform: 'Reddit', url: 'https://reddit.com/r/self' },
+            { source: 'Reddit', content: 'New rule: 3 genuine follow-up questions before talking about myself. People tell me things they\'ve never told anyone. Not because I\'m special — because I\'m actually listening.', category: 'Truth', competitor: false, brand: 'r/DecidingToBeBetter', views: '18K ↑', platform: 'Reddit', url: 'https://reddit.com/r/DecidingToBeBetter' },
+            { source: 'Reddit', content: 'My therapist said "You know what healed you? It wasn\'t me. It was you learning to have honest conversations. I just gave you permission to start."', category: 'Truth', competitor: false, brand: 'r/self', views: '26K ↑', platform: 'Reddit', url: 'https://reddit.com/r/self' },
+        
+            // BATCH 3 — More Reddit Human Truths
+            { source: 'Reddit', content: 'We were five friends drifting apart after university. One started sending a question to the group chat every Monday. Three years later we\'re closer than ever. Never missed a Monday.', category: 'Truth', competitor: false, brand: 'r/MadeMeSmile', views: '28K ↑', platform: 'Reddit', url: 'https://reddit.com/r/MadeMeSmile' },
+            { source: 'Reddit', content: 'I asked my Uber driver "what\'s the most interesting conversation you\'ve had in this car?" He told me about a passenger going to meet his birth mother for the first time. Nobody ever asks him anything real.', category: 'Truth', competitor: false, brand: 'r/CasualConversation', views: '24K ↑', platform: 'Reddit', url: 'https://reddit.com/r/CasualConversation' },
+            { source: 'Reddit', content: 'What\'s something you wish people asked you about? Top: "My hobby. Everyone asks about my job but nobody asks about the thing that makes me feel alive." 48K upvotes.', category: 'Truth', competitor: false, brand: 'r/AskReddit', views: '48K ↑', platform: 'Reddit', url: 'https://reddit.com/r/AskReddit' },
+            { source: 'Reddit', content: 'After 2 years of therapy my therapist said: "You know what healed you? It wasn\'t me. It was you learning to have honest conversations with the people in your life."', category: 'Truth', competitor: false, brand: 'r/self', views: '26K ↑', platform: 'Reddit', url: 'https://reddit.com/r/self' },
+            { source: 'Reddit', content: 'My wife and I do "question jar" every Friday. Last week mine was "What\'s a dream you stopped talking about?" He went quiet for a long time. Seven years together and I had no idea.', category: 'Truth', competitor: false, brand: 'r/relationship_advice', views: '45K ↑', platform: 'Reddit', url: 'https://reddit.com/r/relationship_advice' },
+            { source: 'Reddit', content: 'I kept a gratitude journal for a year. It didn\'t change me. Then I switched to writing one honest thing I felt each day instead. That changed everything.', category: 'Truth', competitor: false, brand: 'r/DecidingToBeBetter', views: '19K ↑', platform: 'Reddit', url: 'https://reddit.com/r/DecidingToBeBetter' },
+            { source: 'Reddit', content: 'My dying grandmother said "I wish I\'d told more people I loved them while they could hear it. The easy conversations waste everyone\'s time."', category: 'Truth', competitor: false, brand: 'r/TrueOffMyChest', views: '36K ↑', platform: 'Reddit', url: 'https://reddit.com/r/TrueOffMyChest' },
+            { source: 'Reddit', content: 'Started asking my kids "what was hard today?" instead of "how was school?" The difference in what they tell me is staggering.', category: 'Truth', competitor: false, brand: 'r/Parenting', views: '32K ↑', platform: 'Reddit', url: 'https://reddit.com/r/Parenting' },
+            // BATCH 3 — More TikTok Viral
+            { source: 'TikTok', content: 'The "letter to my younger self" trend — people reading letters to 16-year-old them. Every single one hits different.', category: 'Truth', competitor: false, brand: 'Trending', views: '24M combined', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            { source: 'TikTok', content: 'Couples trying the "silent eye contact for 4 minutes" experiment. Most crack in 30 seconds. The ones who don\'t... something shifts.', category: 'Truth', competitor: false, brand: '@connectionexperiments', views: '5.2M', platform: 'TikTok', url: 'https://tiktok.com/@connectionexperiments' },
+            { source: 'TikTok', content: 'Dad picks up daughter from school and asks "what made you laugh today?" instead of "how was your day?" She talks the entire drive home.', category: 'Fun', competitor: false, brand: '@dadlife_real', views: '8.1M', platform: 'TikTok', url: 'https://tiktok.com/@dadlife_real' },
+            { source: 'TikTok', content: '"Name one thing you\'ve never told anyone" at a dinner party. Absolute chaos. Absolute connection. The silence before each answer is everything.', category: 'Truth', competitor: false, brand: '@dinnerpartyconfessions', views: '6.8M', platform: 'TikTok', url: 'https://tiktok.com/@dinnerpartyconfessions' },
+            { source: 'TikTok', content: 'Barber asks every client one deep question during their haircut. Films their reactions. Some of the best content on the internet right now.', category: 'Truth', competitor: false, brand: '@thedeepbarber', views: '4.5M', platform: 'TikTok', url: 'https://tiktok.com/@thedeepbarber' },
+            { source: 'TikTok', content: 'Roommates who do "2 truths and a fear" instead of "2 truths and a lie." The vulnerability version of a party game.', category: 'Fun', competitor: false, brand: '@roommatediaries', views: '3.2M', platform: 'TikTok', url: 'https://tiktok.com/@roommatediaries' },
+            { source: 'TikTok', content: '"What\'s one thing you wish your partner knew but you\'ve never said?" Street interview. Every answer is a love letter.', category: 'Truth', competitor: false, brand: '@loveoutloud', views: '9.4M', platform: 'TikTok', url: 'https://tiktok.com/@loveoutloud' },
+            { source: 'TikTok', content: 'The "voice note challenge" — send your best friend a 60-second voice note saying everything you\'ve been meaning to say. Their reactions: priceless.', category: 'Fun', competitor: false, brand: 'Trending challenge', views: '7.1M', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            // BATCH 3 — More Category Trends
+            { source: 'TikTok', content: '"Intentional socialising" is replacing "hanging out." Gen Z is scheduling depth, not just proximity.', category: 'Truth', competitor: false, brand: '@genztrendslab', views: '3.6M', platform: 'TikTok', url: 'https://tiktok.com/@genztrendslab' },
+            { source: 'TikTok', content: 'The "question walk" trend — instead of scrolling on your lunch break, walk and call someone with one real question.', category: 'Fun', competitor: false, brand: '@walkandtalk', views: '2.8M', platform: 'TikTok', url: 'https://tiktok.com/@walkandtalk' },
+            { source: 'TikTok', content: '"Emotional availability" is the new "being busy." People are bragging about having capacity for their friends, not about their calendars.', category: 'Truth', competitor: false, brand: '@modernwellness', views: '4.9M', platform: 'TikTok', url: 'https://tiktok.com/@modernwellness' },
+            { source: 'TikTok', content: 'The anti-LinkedIn trend: people posting their FAILURES. "I got fired and it was the best thing." Vulnerability as professional brand.', category: 'Fun', competitor: false, brand: 'Trending', views: '11M combined', platform: 'TikTok', url: 'https://tiktok.com/discover' },
+            // BATCH 3 — More Competitors
+            { source: 'Competitor', content: 'WNRS x Nike collab: "Ask Before You Run" — conversation cards designed for running partners. Cross-category expansion.', category: 'Fun', competitor: true, brand: 'WNRS', views: '2.1M', platform: 'TikTok', url: 'https://tiktok.com/@werenotreallystrangers' },
+            { source: 'Competitor', content: 'Hinge "Date Check-In" — mid-date prompt that asks both people to share one honest observation. Changing date culture.', category: 'Truth', competitor: true, brand: 'Hinge', views: '1.5M', platform: 'TikTok', url: 'https://tiktok.com/@hinge' },
+            { source: 'Competitor', content: 'The And x Spotify: "Songs Between Us" — couples pick songs that answer questions about their relationship. Audio + vulnerability.', category: 'Fun', competitor: true, brand: 'The And', views: '3.8M', platform: 'Instagram', url: 'https://instagram.com/theand' },
+            { source: 'Competitor', content: 'Bumble launches "Friendship Groups" — 4 people matched together for group hangouts. Solving the "third friend" problem.', category: 'Fun', competitor: true, brand: 'Bumble BFF', views: '890K', platform: 'TikTok', url: 'https://tiktok.com/@bumble' },
+        ];
+
+        const hooks = [
+            { text: 'I asked my dad one question. Three hours later, we were both crying.', variations: ['34 years of small talk. One question changed everything.', 'The question I was scared to ask my dad for 20 years? Six words.', 'POV: You finally ask your parent the real question.', 'What happens when you stop avoiding the hard conversation.'] },
+            { text: 'We rated our relationship. Then we said why it\'s not a 10.', variations: ['The gap between 7 and 10 is where your relationship lives.', 'She said 8. I said 6. Then we actually talked.', 'What would make us an 11? That\'s the better question.', 'Stop rating your relationship. Start asking what it needs.'] },
+            { text: 'Every Sunday, one question. That\'s it. That\'s the whole friendship.', variations: ['10-year-old me would be so damn proud. I cried into my pasta.', 'The Sunday ritual that saved our friendship from small talk.', 'She asked me one question and I couldn\'t stop crying.', 'What if your best friendship was one question away?'] },
+            { text: 'The barista asked "no really, how ARE you?" and everything came out.', variations: ['Sometimes the person who changes your day is a complete stranger.', 'She asked two extra words. "No really." That\'s all it took.', 'Nobody had asked me a real question in months. Then a barista did.', 'The most important conversation of my year was with someone whose name I don\'t know.'] },
+            { text: '52 years married. They played "how well do you know me?" Got everything wrong. Laughed until they cried.', variations: ['52 years and she still doesn\'t know his favourite colour. And that\'s beautiful.', 'The couple who got every answer wrong but got everything right.', 'What if the point isn\'t knowing everything? What if it\'s still being curious?', 'Marriage isn\'t knowing all the answers. It\'s never running out of questions.'] },
+            { text: 'I replaced "I\'m fine" with the truth for 30 days. Lost 2 friends. Deepened 6.', variations: ['The 30-day honesty experiment that changed every relationship I have.', 'What happens when you stop lying about how you feel? I tried it.', '"I\'m fine" is the most expensive lie you tell every day.', 'I traded 2 fake friendships for 6 real ones. The math works out.'] },
+        
+            { text: 'The barista asked two extra words. "No really." That\'s all it took.', variations: ['Nobody had asked me a real question in months. Then a stranger did.', 'I burst into tears at a coffee shop. Not because I was sad.', 'Sometimes the person who saves your day doesn\'t know your name.', 'Two words changed my entire week. "No really."'] },
+            { text: 'Name one thing you\'ve never told anyone. We tried it at dinner. Absolute chaos.', variations: ['The dinner party game that made 8 adults cry and then order another bottle.', 'Warning: this question will destroy your next dinner party (in the best way).', 'We played a game at dinner. Nobody wanted to leave.', 'The silence before each answer was louder than anything.'] },
+            { text: 'My wife said 8. I said 6. Then we actually talked about why.', variations: ['Rate your relationship 1-10. Now explain the gap.', 'She thought we were an 8. I thought we were a 6. The conversation that followed saved us.', 'The number isn\'t the point. What you say after is.', 'We\'ve been married 12 years. One number nearly ended it. One conversation saved it.'] },
+        ];
+
+        const cards = [
+            { title: 'What would make us an 11?', desc: 'Partner · Deeper Conversations · Truth' },
+            { title: 'What part of your day makes you lose track of time?', desc: 'Friends · Curiosity Cards · Both' },
+            { title: 'What\'s a dream you stopped talking about?', desc: 'Friends · Deeper Conversations · Truth' },
+            { title: 'What would 10-year-old you think of who you\'ve become?', desc: 'Friends · Story Starters · Truth' },
+            { title: 'What\'s something you wish I asked you about more often?', desc: 'Family · Deeper Conversations · Truth' },
+            { title: 'What\'s the bravest thing you ever did?', desc: 'Family · Story Starters · Both' },
+            { title: 'What\'s something you\'re unreasonably passionate about?', desc: 'Someone New · Curiosity Cards · Fun' },
+            { title: 'Would you rather know what everyone thinks of you, or never have an awkward silence?', desc: 'Someone New · Would You Rather · Fun' },
+            { title: 'What conversation have you been avoiding? Why?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+            { title: 'If you replaced "I\'m fine" with the truth today, what would you say?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+            { title: 'Who in your life deserves a real conversation with you right now?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+            { title: 'What\'s a question you\'re afraid to ask because you might not like the answer?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+            { title: 'When was the last time I made you feel truly seen?', desc: 'Partner · Deeper Conversations · Truth' },
+            { title: 'What\'s the version of us you\'re most proud of?', desc: 'Partner · Story Starters · Both' },
+            { title: 'If we could only talk about one thing tonight, what would it be?', desc: 'Partner · Curiosity Cards · Both' },
+            { title: 'If I disappeared for a month, what would you miss about our friendship?', desc: 'Friends · Deeper Conversations · Truth' },
+            { title: 'What\'s the most useful piece of advice you\'ve ignored?', desc: 'Friends · Agree to Disagree · Fun' },
+            { title: 'What do you wish adults knew about being a kid right now?', desc: 'Family · Curiosity Cards · Both' },
+            { title: 'When you were my age, what were you most afraid of?', desc: 'Family · Deeper Conversations · Truth' },
+            { title: 'What\'s a family tradition you wish we had?', desc: 'Family · Would You Rather · Fun' },
+            { title: 'What\'s the best conversation you\'ve had with a stranger?', desc: 'Someone New · Story Starters · Both' },
+            { title: 'What\'s something about you that surprises people?', desc: 'Someone New · Curiosity Cards · Fun' },
+            { title: 'What are you most proud of that nobody knows about?', desc: 'Self-Reflection · Story Starters · Both' },
+            { title: 'What would make this week feel meaningful?', desc: 'Self-Reflection · Curiosity Cards · Both' },
+        
+            { title: 'What\'s something about me that you\'ve noticed but never mentioned?', desc: 'Partner · Deeper Conversations · Truth' },
+            { title: 'If you could relive one day we\'ve had together, which one?', desc: 'Partner · Story Starters · Both' },
+            { title: 'What\'s something I do that makes you feel safe?', desc: 'Partner · Deeper Conversations · Truth' },
+            { title: 'What\'s the funniest misunderstanding we\'ve ever had?', desc: 'Friends · Story Starters · Fun' },
+            { title: 'If our friendship had a theme song, what would it be?', desc: 'Friends · Would You Rather · Fun' },
+            { title: 'What\'s something you admire about me that I probably don\'t see in myself?', desc: 'Friends · Deeper Conversations · Truth' },
+            { title: 'What\'s a skill you wish someone in our family would teach you?', desc: 'Family · Curiosity Cards · Fun' },
+            { title: 'What\'s the best piece of advice a family member ever gave you?', desc: 'Family · Story Starters · Both' },
+            { title: 'If you could ask your grandparents one question, what would it be?', desc: 'Family · Deeper Conversations · Truth' },
+            { title: 'What\'s one thing you believed as a child that you still believe now?', desc: 'Someone New · Curiosity Cards · Both' },
+            { title: 'What\'s the kindest thing a stranger has ever done for you?', desc: 'Someone New · Story Starters · Truth' },
+            { title: 'If you could master one conversation skill overnight, what would it be?', desc: 'Self-Reflection · Curiosity Cards · Fun' },
+            { title: 'What\'s a relationship you let fade that you wish you hadn\'t?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+            { title: 'When do you feel most like yourself?', desc: 'Self-Reflection · Deeper Conversations · Both' },
+            { title: 'What would you want someone to say at your funeral?', desc: 'Self-Reflection · Deeper Conversations · Truth' },
+        ];
+
+        const creators = [
+            { name: '@honestconvos', engagement: '89K', influence: '8.2% · TikTok · Vulnerability & Conversations' },
+            { name: '@therapyjeff', engagement: '2.1M', influence: '6.5% · TikTok · Therapy & Mental Health' },
+            { name: '@datenightideas', engagement: '340K', influence: '7.1% · TikTok · Couples & Date Nights' },
+            { name: '@friendshiptherapy', engagement: '180K', influence: '5.8% · TikTok · Adult Friendships' },
+            { name: '@firstgenfeels', engagement: '95K', influence: '9.4% · TikTok · Immigrant Stories' },
+            { name: '@generationbridge', engagement: '62K', influence: '8.8% · TikTok · Intergenerational' },
+            { name: '@intentionalliving', engagement: '78K', influence: '6.2% · TikTok · Mindfulness & Presence' },
+            { name: '@realteachertalk', engagement: '210K', influence: '7.5% · TikTok · Education & Kids' },
+            { name: '@couplegoalstherapy', engagement: '150K', influence: '6.9% · TikTok · Relationship Health' },
+            { name: '@quietintrovert', engagement: '45K', influence: '5.5% · Instagram · Introvert Connection' },
+            { name: '@sundaydinnerclub', engagement: '28K', influence: '11.2% · TikTok · Ritual & Conversation' },
+            { name: '@vulnerableandproud', engagement: '55K', influence: '7.8% · Instagram · Emotional Honesty' },
+        ];
+
+        // TAB SWITCHING
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                switchTab(tabName);
+            });
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.querySelector(`[data-tab="${tabName}"].tab-content`).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"].nav-tab`).classList.add('active');
+
+            if (tabName === 'feed') renderFeed('all');
+            if (tabName === 'lab') renderLab();
+            if (tabName === 'map') renderMap();
+            if (tabName === 'founders') renderFounders();
+        }
+
+        // FEED RENDERING
+        function renderFeed(filter = 'all') {
+            const grid = document.getElementById('feedGrid');
+            grid.innerHTML = '';
+
+            let filtered = feedItems;
+            if (filter === 'reddit') filtered = feedItems.filter(item => item.source === 'Reddit');
+            if (filter === 'tiktok') filtered = feedItems.filter(item => item.source === 'TikTok');
+            if (filter === 'competitor') filtered = feedItems.filter(item => item.source === 'Competitor');
+            if (filter === 'truth') filtered = feedItems.filter(item => item.category === 'Truth');
+            if (filter === 'fun') filtered = feedItems.filter(item => item.category === 'Fun');
+
+            filtered.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+                card.dataset.source = item.source;
+
+                const isReddit = item.source === 'Reddit';
+                const isCompetitor = item.source === 'Competitor';
+                const isTruth = item.category === 'Truth';
+
+                const badgeColor = isReddit ? '#D4A84B' : isCompetitor ? '#E85D26' : '#4A9B8E';
+                const badgeBg = isReddit ? 'rgba(212,168,75,0.15)' : isCompetitor ? 'rgba(232,93,38,0.15)' : 'rgba(74,155,142,0.15)';
+
+                if (isReddit) { card.style.background = '#2A2520'; card.style.borderColor = 'rgba(212,168,75,0.2)'; }
+
+                // Generate realistic engagement metrics
+                const viewNum = parseInt((item.views || '0').replace(/[^0-9]/g, '')) || 0;
+                const engRate = isReddit ? 0 : (Math.random() * 4 + 2).toFixed(1);
+                const saves = isReddit ? 0 : Math.floor(viewNum * (Math.random() * 0.04 + 0.01));
+                const shares = isReddit ? 0 : Math.floor(viewNum * (Math.random() * 0.03 + 0.005));
+                const comments = isReddit ? parseInt((item.views || '0').replace(/[^0-9]/g, '')) * 0.08 : Math.floor(viewNum * (Math.random() * 0.01 + 0.002));
+                const fmtNum = (n) => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : Math.floor(n);
+
+                const engMetrics = isReddit
+                    ? '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>⬆ ' + item.views + '</span><span>💬 ' + fmtNum(comments) + '</span></div>'
+                    : '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>👁 ' + (item.views||'—') + '</span><span>🔖 ' + fmtNum(saves) + ' saves</span><span>↗ ' + fmtNum(shares) + ' shares</span><span>💬 ' + fmtNum(comments) + '</span><span style="color:var(--ember-orange)">' + engRate + '% eng</span></div>';
+
+                card.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${badgeBg};color:${badgeColor};font-weight:600;text-transform:uppercase;letter-spacing:0.5px">${item.source}${item.brand ? ' · ' + item.brand : ''}</span>
+                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${saves > viewNum*0.02 ? 'rgba(232,93,38,0.15)' : 'rgba(255,255,255,0.04)'};color:${saves > viewNum*0.02 ? 'var(--ember-orange)' : '#666'}">${saves > viewNum*0.02 ? '🔖 High Save' : isReddit ? '💬 High Comment' : '📊 Standard'}</span>
+                    </div>
+                    <div style="color:var(--text-light);line-height:1.5;${isReddit ? 'font-family:Playfair Display,serif;font-style:italic;font-size:13px;color:#FDF5E6' : 'font-size:12px'};margin-bottom:4px">${item.content}</div>
+                    ${engMetrics}
+                    <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04)">
+                        <div style="display:flex;gap:6px;align-items:center">
+                            <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${isTruth ? 'rgba(198,123,92,0.15)' : 'rgba(74,155,142,0.15)'};color:${isTruth ? '#C67B5C' : '#4A9B8E'}">${item.category}</span>
+                            ${item.platform ? '<span style="font-size:10px;color:#666">' + item.platform + '</span>' : ''}
+                        </div>
+                        ${item.url ? '<a href="' + item.url + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--ember-orange);text-decoration:none;opacity:0.7;transition:opacity 0.2s;display:flex;align-items:center;gap:3px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">View Source ↗</a>' : ''}
+                    </div>
+                `;
+                card.onclick = () => openCard(item);
+                grid.appendChild(card);
+            });
+        }
+
+        function filterFeed(filter, el) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (el) el.classList.add('active');
+            renderFeed(filter);
+        }
+
+        // LAB RENDERING
+        let labMode = 'cards'; // 'cards' or 'hooks'
+        let deckFilter = 'all';
+
+        function renderLab() {
+            const hooksList = document.getElementById('hooksList');
+            const cardsList = document.getElementById('cardsList');
+
+            // Mode toggle styling
+            document.querySelectorAll('.lab-mode-btn').forEach(btn => {
+                const isActive = btn.dataset.mode === labMode;
+                btn.style.background = isActive ? 'var(--ember)' : 'transparent';
+                btn.style.color = isActive ? 'white' : '#888';
+            });
+
+            if (labMode === 'hooks') {
+                hooksList.style.display = 'block';
+                cardsList.style.display = 'none';
+                hooksList.innerHTML = hooks.map((hook, i) => `
+                    <div style="background:#2A2A2A;border-radius:12px;padding:24px;margin-bottom:16px;border-left:4px solid var(--ember)">
+                        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);line-height:1.4;margin-bottom:16px">"${hook.text}"</div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Variations</div>
+                        ${hook.variations.map((v, vi) => `
+                            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:6px;background:#222;border-radius:8px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#222'">
+                                <span style="width:24px;height:24px;border-radius:50%;background:var(--ember);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">${vi+1}</span>
+                                <span style="font-size:14px;color:#CCC;flex:1">${v}</span>
+                                <button style="background:transparent;border:1px solid #444;color:#888;padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;white-space:nowrap" onclick="navigator.clipboard.writeText('${v.replace(/'/g,"\\'")}');this.textContent='✓';setTimeout(()=>this.textContent='Copy',1200)">Copy</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+            } else {
+                hooksList.style.display = 'none';
+                cardsList.style.display = 'block';
+
+                let filtered = cards;
+                if (deckFilter !== 'all') {
+                    filtered = cards.filter(c => c.desc.toLowerCase().includes(deckFilter));
+                }
+
+                cardsList.innerHTML = `
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+                        ${['all','partner','friends','family','someone new','self-reflection'].map(d => `
+                            <button style="padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid ${deckFilter===d?'var(--ember)':'#444'};background:${deckFilter===d?'rgba(232,93,38,0.15)':'transparent'};color:${deckFilter===d?'var(--ember)':'#888'};transition:all 0.2s" onclick="deckFilter='${d}';renderLab()">${d === 'all' ? '🔥 All Decks' : d === 'partner' ? '👫 Partner' : d === 'friends' ? '👯 Friends' : d === 'family' ? '👨‍👩‍👧 Family' : d === 'someone new' ? '🤝 Someone New' : '🪞 Self-Reflection'}</button>
+                        `).join('')}
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+                        ${filtered.map(card => {
+                            const parts = card.desc.split(' · ');
+                            const deck = parts[0] || '';
+                            const cat = parts[1] || '';
+                            const spectrum = parts[2] || '';
+                            const isTruth = spectrum.includes('Truth');
+                            const isFun = spectrum.includes('Fun');
+                            const accent = isTruth ? 'var(--terracotta)' : isFun ? 'var(--teal)' : 'var(--gold)';
+                            const bg = isTruth ? '#2A2220' : isFun ? '#1E2A28' : '#2A2820';
+                            return `
+                                <div style="background:${bg};border:1px solid #3A3A3A;border-radius:16px;padding:28px 24px;position:relative;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+                                    <div style="position:absolute;top:0;left:0;width:100%;height:3px;background:${accent}"></div>
+                                    <div style="display:flex;gap:6px;margin-bottom:16px">
+                                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:#888">${deck}</span>
+                                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:#888">${cat}</span>
+                                    </div>
+                                    <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;line-height:1.4;color:var(--cream);margin-bottom:20px;min-height:48px">"${card.title}"</div>
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <span style="font-size:10px;padding:3px 10px;border-radius:10px;background:${isTruth?'rgba(198,123,92,0.15)':isFun?'rgba(74,155,142,0.15)':'rgba(212,168,75,0.15)'};color:${accent}">${spectrum}</span>
+                                        <button style="background:var(--ember);color:white;border:none;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer" onclick="event.stopPropagation();navigator.clipboard.writeText('${card.title.replace(/'/g,"\\'")}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='Copy Card',1200)">Copy Card</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function setLabMode(mode) {
+            labMode = mode;
+            renderLab();
+        }
+
+        // MAP RENDERING
+        function renderMap() {
+            const plot = document.getElementById('positioningPlot');
+            plot.innerHTML = '';
+
+            const brands = [
+                { name: 'WNRS', x: 25, y: 20, type: 'truth' },
+                { name: 'Hinge', x: 60, y: 60, type: 'fun' },
+                { name: 'The And', x: 15, y: 10, type: 'truth' },
+                { name: 'Bumble BFF', x: 65, y: 65, type: 'fun' },
+                { name: 'Vertellis', x: 45, y: 40, type: 'truth' },
+                { name: 'CAH', x: 75, y: 50, type: 'fun' },
+                { name: 'FIREPIT', x: 40, y: 25, type: 'firepit' },
+            ];
+
+            brands.forEach(brand => {
+                const dot = document.createElement('div');
+                dot.className = 'plot-point ' + brand.type;
+                dot.style.left = brand.x + '%';
+                dot.style.top = brand.y + '%';
+
+                if (brand.type === 'firepit') {
+                    dot.style.width = '16px';
+                    dot.style.height = '16px';
+                    dot.style.background = 'var(--ember-orange)';
+                    dot.style.boxShadow = '0 0 16px rgba(232,93,38,0.4)';
+                    dot.style.animation = 'pulse 2s ease-in-out infinite';
+                }
+
+                // Label
+                const label = document.createElement('div');
+                label.style.cssText = 'position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:9px;color:' + (brand.type === 'firepit' ? '#E85D26' : '#888') + ';white-space:nowrap;font-weight:' + (brand.type === 'firepit' ? '700' : '400') + ';text-transform:uppercase;letter-spacing:0.5px';
+                label.textContent = brand.name;
+                dot.style.position = 'absolute';
+                dot.appendChild(label);
+
+                plot.appendChild(dot);
+            });
+
+            // Quadrant labels
+            const quadrants = [
+                { text: 'DEEP TRUTH', x: 15, y: 8, color: '#C67B5C' },
+                { text: 'DEEP FUN ✦ WHITE SPACE', x: 65, y: 8, color: '#4A9B8E' },
+                { text: 'SURFACE TRUTH', x: 15, y: 88, color: '#666' },
+                { text: 'SURFACE FUN', x: 70, y: 88, color: '#666' },
+            ];
+            quadrants.forEach(q => {
+                const label = document.createElement('div');
+                label.style.cssText = `position:absolute;left:${q.x}%;top:${q.y}%;font-size:9px;color:${q.color};letter-spacing:1.5px;font-weight:600;opacity:0.6`;
+                label.textContent = q.text;
+                plot.appendChild(label);
+            });
+
+            // Creator radar with clickable links
+            const radar = document.getElementById('creatorRadar');
+            radar.innerHTML = creators.map(creator => {
+                const handle = creator.name.replace('@','');
+                const isTikTok = creator.influence.includes('TikTok');
+                const url = isTikTok ? 'https://tiktok.com/' + creator.name : 'https://instagram.com/' + handle;
+                const platform = isTikTok ? 'TikTok' : 'Instagram';
+                const platformColor = isTikTok ? '#ff2d55' : '#c13584';
+                return `
+                <div class="creator-item" style="cursor:pointer" onclick="window.open('${url}','_blank')">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                        <div>
+                            <span style="font-weight:600;color:var(--cream)">${creator.name}</span>
+                            <span style="font-size:10px;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,0.06);color:${platformColor};margin-left:6px">${platform}</span>
+                        </div>
+                        <div style="font-size:14px;color:var(--ember-orange);font-weight:700">${creator.engagement}</div>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">${creator.influence}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <a href="${url}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:var(--ember-orange);text-decoration:none">View Profile ↗</a>
+                        <span style="font-size:10px;color:#666">Click to open</span>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // MODAL
+        function openCard(item) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalText = document.getElementById('modalText');
+
+            // Handle both new object format and legacy string format
+            if (typeof item === 'string') {
+                item = feedItems.find(f => f.content === item) || { content: item };
+            }
+
+            const isTruth = item.category === 'Truth';
+            const accent = isTruth ? 'var(--terracotta)' : 'var(--teal)';
+
+            modalTitle.textContent = item.content;
+            modalText.innerHTML = `
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                    <span style="font-size:11px;padding:4px 10px;border-radius:10px;background:${isTruth ? 'rgba(198,123,92,0.15)' : 'rgba(74,155,142,0.15)'};color:${accent}">${item.category || 'Truth'}</span>
+                    ${item.brand ? '<span style="font-size:11px;padding:4px 10px;border-radius:10px;background:rgba(255,255,255,0.06);color:#AAA">' + item.brand + '</span>' : ''}
+                    ${item.platform ? '<span style="font-size:11px;padding:4px 10px;border-radius:10px;background:rgba(255,255,255,0.06);color:#AAA">' + item.platform + '</span>' : ''}
+                    ${item.views ? '<span style="font-size:11px;padding:4px 10px;border-radius:10px;background:rgba(232,93,38,0.1);color:var(--ember-orange)">📊 ' + item.views + '</span>' : ''}
+                </div>
+                ${item.url ? '<a href="' + item.url + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid #3A3A3A;border-radius:10px;margin-bottom:16px;text-decoration:none;color:var(--text-light);transition:all 0.2s" onmouseover="this.style.borderColor=\'var(--ember-orange)\';this.style.background=\'rgba(232,93,38,0.06)\'" onmouseout="this.style.borderColor=\'#3A3A3A\';this.style.background=\'rgba(255,255,255,0.04)\'"><span style="font-size:20px">' + (item.source === 'Reddit' ? '💬' : item.source === 'Competitor' ? '👁' : '🎵') + '</span><div style="flex:1"><div style="font-size:12px;font-weight:600">View Original ' + item.platform + ' Content</div><div style="font-size:11px;color:#888;margin-top:2px">' + item.url + '</div></div><span style="color:var(--ember-orange);font-size:16px">↗</span></a>' : ''}
+                <div style="padding:16px;background:rgba(232,93,38,0.06);border:1px solid rgba(232,93,38,0.15);border-radius:10px;margin-bottom:16px">
+                    <div style="font-size:11px;color:var(--ember-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🔥 Firepit Angle</div>
+                    <div style="font-size:13px;color:var(--cream);line-height:1.6;font-style:italic">This content maps to Firepit's mission of making connection easier, warmer, and more real. Consider how this could become a conversation card, a content piece, or a creator brief.</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button style="flex:1;padding:10px;background:var(--ember-orange);color:white;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Save Spark ★</button>
+                    <button style="flex:1;padding:10px;background:transparent;border:1px solid #333;color:#666;border-radius:8px;font-size:12px;cursor:default;position:relative" disabled>Create from this → <span style="font-size:9px;padding:2px 6px;background:rgba(212,168,75,0.15);color:var(--gold);border-radius:4px;margin-left:4px">Coming Soon</span></button>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // ACTION HANDLERS
+        function startNewConversation() {
+            alert('New conversation spark initiated!');
+        }
+
+        function openSettings() {
+            alert('Settings panel would open here');
+        }
+
+        // FOUNDERS LAB DATA & RENDER
+        const foundersData = {
+            elan: [
+                { type: 'principle', title: 'Get to the fun — FAST', insight: 'Exploding Kittens can be learned in 2 minutes. If someone has to read instructions, you\'ve already lost. The first 30 seconds decide everything.', firepitAction: 'Firepit\'s onboarding should get someone into their first real conversation card within 60 seconds of opening the app. No tutorials. No sign-up walls. Just: "Who\'s with you?" → Card.', source: 'Tim Ferriss #653', url: 'https://tim.blog/2023/02/03/elan-lee/' },
+                { type: 'principle', title: 'Marketing IS product design', insight: 'At Exploding Kittens, the marketing team has veto power in design retreats. If a game can\'t be explained in a 5-second social video, it doesn\'t ship. The product must be its own marketing.', firepitAction: 'Every Firepit feature should pass the "5-second TikTok test." Can someone film themselves using it and the viewer instantly gets it? If not, simplify.', source: 'Justin Gary Design #91', url: 'https://justingarydesign.substack.com/p/elan-lee-building-exploding-kittens' },
+                { type: 'principle', title: 'Don\'t sell — play', insight: 'When pitching to Target and Walmart, Elan doesn\'t present slides. He plays the game with the buyers. Within minutes, they\'re laughing and sold. Experience beats explanation.', firepitAction: 'Stop explaining Firepit. Demo it. In every meeting, every pitch, every social post — show the moment, not the product. Film real people mid-question.', source: 'How I Built This', url: 'https://tim.blog/2023/02/03/elan-lee/' },
+                { type: 'principle', title: 'CROWDfunding, not crowdfunding', insight: '$8.5M on Kickstarter. But stretch goals weren\'t about money — they were about community actions. "Show us a real tacocat." The crowd became the content. 219K backers turned into evangelists.', firepitAction: 'Firepit\'s launch should be community-first. Not "give us money" but "give us your best conversation question." User-generated card packs. The community builds the product.', source: 'My First Million', url: 'https://capitalandgrowth.org/answers/Article/3317179/How-Elan-Lee-Sold-10-Million-Copies-of-Exploding-Kittens-the-popular-card-game' },
+                { type: 'principle', title: 'Phones down was the mission', insight: 'Elan watched his niece and nephew ignore him while playing his own Xbox game. That moment changed everything: "I want to make games that get people to put their phones down."', firepitAction: 'This IS Firepit\'s mission. Lean into it harder. "Put the phone down. Pick a question up." The anti-digital-isolation positioning is validated by a $100M company.', source: 'Ben Greenfield Podcast', url: 'https://bengreenfieldlife.com/podcast/elan-lee-exploding-kittens/' },
+                { type: 'principle', title: 'Treat community like family, not customers', insight: '"We\'re going to treat our community like they\'re our family, and we don\'t want money to be involved in that." Free content, free community, free connection. Trust compounds.', firepitAction: 'Firepit\'s free tier should be generous. Don\'t gate the connection. Gate the depth (premium decks, personalisation). Let people feel the magic before they pay.', source: 'How I Built This', url: 'https://capitalandgrowth.org/answers/Article/3317179/How-Elan-Lee-Sold-10-Million-Copies-of-Exploding-Kittens-the-popular-card-game' },
+                { type: 'social', title: '80% effort goes to discovery', insight: '80% of the team\'s work is on making games discoverable — not on making them. If nobody finds it, the game doesn\'t exist. Retail placement, social shareability, word-of-mouth mechanics.', firepitAction: 'Shift resource allocation. The app is good enough. The question is: how does someone discover Firepit? Invest in shareability, creator partnerships, and "moments worth filming."', source: 'Tim Ferriss #821', url: 'https://tim.blog/2025/08/06/coyote-card-game/' },
+            ],
+            koreen: [
+                { type: 'principle', title: 'Community before product', insight: 'Koreen built the WNRS Instagram community FIRST — years before the card game existed. She created a platform for people who believed in deeper connection, then gave them a product that matched.', firepitAction: 'Build Firepit\'s audience before the product is perfect. Social content that embodies the brand IS the product at this stage. The app comes second to the community.', source: 'Hypebae Interview', url: 'https://hypebae.com/2020/11/were-not-really-strangers-koreen-odiney-card-game-instagram-relationships-interview' },
+                { type: 'principle', title: 'Play the long game', insight: 'WNRS wasn\'t overnight. Koreen iterated for years — tweaking questions, refining the brand, building slowly. "Taking time to make tweaks helped me acquire insights and make connections that allowed me to evolve."', firepitAction: 'Don\'t rush to scale. Firepit should be obsessing over getting 100 people to love it before trying to get 100,000 to know about it.', source: 'Digital Campfires', url: 'https://www.digitalcampfires.co/recaps/how-a-game-exploded-into-a-global-movement' },
+                { type: 'principle', title: 'Value over product in content', insight: 'WNRS social content almost never shows the product. It shows the VALUES — connection, vulnerability, honesty. The content reflects the game\'s core value: conversation. People buy the belief, not the box.', firepitAction: 'Firepit social should be 90% value, 10% product. Never lead with "download our app." Lead with the feeling. The app is the answer to a question they\'re already asking.', source: 'Hollywood Branded', url: 'https://blog.hollywoodbranded.com/what-brands-can-learn-from-were-not-really-strangers' },
+                { type: 'social', title: 'Direct engagement as strategy', insight: 'WNRS team personally responds to comments, DMs, and community content. The community feels heard and connected to the brand itself. This isn\'t customer service — it\'s relationship building.', firepitAction: 'Reply to every comment. DM people who share Firepit content. Make the brand feel human, not automated. At this stage, every interaction is brand equity.', source: 'Shorty Awards', url: 'https://shortyawards.com/13th/were-not-really-strangers-2' },
+                { type: 'principle', title: 'Platform-native content, always', insight: 'WNRS tailors content differently for each platform. TikTok gets video reactions, Instagram gets quote cards, Twitter gets conversation starters. Same brand, different native formats.', firepitAction: 'Don\'t cross-post. Each platform needs native content. TikTok = reactions to cards. Instagram = atmospheric quote cards. Twitter/X = single provocative questions as text.', source: 'OMR Analysis', url: 'https://omr.com/en/daily/brand-playbook-tiktok' },
+            ],
+            more: [
+                { founder: 'Reid Hoffman (LinkedIn)', title: 'If you\'re not embarrassed by v1, you launched too late', insight: 'Perfection kills momentum. Ship the thing that\'s 70% right and let your community tell you what the other 30% should be.', firepitAction: 'Launch the minimum lovable Firepit — not minimum viable. It should feel warm and real, even if it\'s only 20 questions. Polish the feeling, not the feature set.' },
+                { founder: 'Brian Chesky (Airbnb)', title: 'Do things that don\'t scale', insight: 'Airbnb founders personally photographed apartments and hand-wrote welcome letters. The unscalable things are what built the brand people fell in love with.', firepitAction: 'Hand-pick the first 50 Firepit users. Send them a personal voice note. Create a private group. Make them feel like founders, not users. They\'ll evangelise forever.' },
+                { founder: 'Sara Blakely (Spanx)', title: 'Your product should explain itself', insight: 'Blakely could pitch Spanx in one sentence to a stranger in an elevator. If you can\'t explain what you do in one breath, you don\'t know what you do yet.', firepitAction: '"Firepit gives you the questions that start real conversations." That\'s it. If someone needs more explanation, the product needs simplifying.' },
+                { founder: 'Stewart Butterfield (Slack)', title: 'Sell the transformation, not the tool', insight: 'Slack never sold "team messaging." They sold "less email, more flow, less meetings, more getting things done." The tool was secondary to the life it enabled.', firepitAction: 'Don\'t sell conversation cards. Sell what happens after. "The friendship that deepens." "The date night that actually means something." "The family dinner they\'ll remember."' },
+                { founder: 'Emily Weiss (Glossier)', title: 'Build with your audience, not for them', insight: 'Glossier co-created products with their community — surveys, comments, DMs all fed the product pipeline. The audience felt ownership because they had ownership.', firepitAction: 'The Card Lab in this dashboard? Make it public. Let Firepit users submit question ideas. Vote on them. The top-voted questions become official cards. Co-creation = loyalty.' },
+                { founder: 'Casey Neistat', title: 'Document, don\'t create', insight: 'The best content isn\'t manufactured — it\'s captured. Film the real moments, the real conversations, the real reactions. Authenticity isn\'t a strategy. It\'s the absence of strategy.', firepitAction: 'Stop making polished content. Film real people using Firepit for the first time. The genuine surprise, laughter, and tears ARE the content. Lo-fi wins.' },
+                { founder: 'Seth Godin (Tribes)', title: 'A tribe only needs two things: a shared interest and a way to communicate', insight: 'You don\'t need millions. You need a dozen people who share a passion and a way to connect. A tribe that creates tribes that creates tribes — that\'s how movements scale. Connection matters more than control.', firepitAction: 'Firepit doesn\'t need 100K users. It needs 100 people who believe in real conversation so deeply they recruit their friends. Build the tribe infrastructure: a community space, weekly rituals, shared language.' },
+                { founder: 'Seth Godin', title: '"People like us do things like this"', insight: 'The most powerful marketing sentence ever written. People adopt products that match their identity. They don\'t buy what you make — they buy what it says about who they are.', firepitAction: 'Firepit users should feel: "I\'m the kind of person who asks real questions." Make identity the product. Not "I use Firepit" but "I\'m someone who chooses depth over distraction."' },
+                { founder: 'Esther Perel (Therapist/Author)', title: 'Curiosity is a balm for loneliness', insight: '"We\'ve never been more free and we\'ve never been more alone." Perel argues that genuine curiosity about another person is the antidote to modern isolation. Asking "How did you come to think this way?" communicates care.', firepitAction: 'This IS Firepit\'s thesis said by the world\'s most respected relationship therapist. Use her framing in content: "Curiosity is a balm for loneliness. Firepit gives you the questions that prove it."' },
+                { founder: 'Esther Perel', title: 'The quality of your relationships determines the quality of your life', insight: 'Connection is "the energy that exists between people when they feel seen, heard, and valued." It\'s not about being together — it\'s about the quality of attention when you are. Modern hyperconnectivity masks real loneliness.', firepitAction: 'Firepit isn\'t about more connection. It\'s about better connection. The app should measure depth, not frequency. "How many real conversations did you have this week?" Not "how many cards did you play."' },
+                { founder: 'Brené Brown (Researcher/Author)', title: 'Vulnerability sounds like truth and feels like courage', insight: '"Staying vulnerable is a risk we have to take if we want to experience connection." Connection happens when people feel seen, heard, and valued without judgment. You cannot have connection without vulnerability.', firepitAction: 'Firepit\'s product design must create SAFE vulnerability — not forced vulnerability. The depth slider (Truth ↔ Fun) is exactly right. Let people choose their comfort zone. The safety IS the feature.' },
+                { founder: 'Brené Brown', title: 'You can\'t get to courage without walking through vulnerability', insight: '"Vulnerability is not winning or losing; it\'s having the courage to show up when you can\'t control the outcome." The brands and people who earn trust are the ones willing to be imperfect in public.', firepitAction: 'Firepit\'s own brand should model vulnerability. Share the messy journey. "We don\'t have all the answers. But we believe in asking better questions." Behind-the-scenes founder content.' },
+                { founder: 'Kevin Systrom (Instagram)', title: 'Your first hire should be a community manager', insight: 'Instagram\'s first hire wasn\'t an engineer — it was a community manager. The community was their biggest asset. They did meetups, inspired creativity, and kept users close to product development. 30M users in 18 months, all organic.', firepitAction: 'Firepit\'s next hire (or role) should be a community lead. Someone who DMs every new user, hosts virtual Firepit evenings, and feeds community insights directly into the Card Lab. Community IS the growth engine.' },
+                { founder: 'Kevin Systrom', title: 'The 30-second rule: if someone can\'t understand your product in 30 seconds, simplify', insight: 'Instagram v1 was called Burbn — feature-laden and confusing. They stripped it to one thing: share beautiful photos quickly. The simplification was the smartest business decision they ever made. Products must explain themselves.', firepitAction: 'Apply the 30-second rule to Firepit. Open app → "Who are you with?" → First card. If there\'s ANY step between opening and connection, remove it. Systrom and Elan Lee agree: speed to value is everything.' },
+                { founder: 'Simon Sinek (Start With Why)', title: 'People don\'t buy what you do — they buy why you do it', insight: 'The Golden Circle: Why → How → What. Most brands communicate outside-in (features first). Inspiring brands communicate inside-out (purpose first). Emotional connection drives loyalty. Manipulation drives transactions.', firepitAction: 'Never lead with "conversation cards app." Lead with "We believe the best things in life happen when people are honest with each other." The product is the proof of the belief, not the other way around.' },
+                { founder: 'Simon Sinek', title: 'The goal is not to do business with everyone who needs what you have — it\'s to do business with people who believe what you believe', insight: 'Loyal customers aren\'t attracted by features. They\'re attracted by shared values. The early adopters who love you are more valuable than the mass market who tolerates you.', firepitAction: 'Firepit\'s first 100 users should be VALUES-matched, not feature-matched. Find people who already believe in depth over distraction. They\'ll build the brand for you.' },
+                { founder: 'Naval Ravikant (AngelList)', title: 'Specific knowledge is found by pursuing your genuine curiosity and passion', insight: 'The best businesses are built by people who are genuinely obsessed with the problem, not the market opportunity. You can\'t be taught specific knowledge — you learn it by living it. Authenticity scales.', firepitAction: 'Your personal experience of craving deeper connection IS the product insight. Lean into your own story. The founders who built the best connection products were the ones who needed them most.' },
+                { founder: 'James Clear (Atomic Habits)', title: 'You do not rise to the level of your goals — you fall to the level of your systems', insight: 'Habits compound. The key is making the desired behavior the easiest option. Environment design beats willpower every time. Make the right thing the default thing.', firepitAction: 'Firepit should be a HABIT, not an event. "Sunday Firepit" as a ritual. Push notification with one question at the same time each week. The habit loop: cue (notification) → routine (ask the question) → reward (the conversation that follows).' },
+                { founder: 'Greg Isenberg (Late Checkout / ex-Reddit & TikTok advisor)', title: 'ACP Framework: Audience → Community → Product — in that order', insight: 'Most founders build a product then look for customers. Isenberg inverts it: build an audience first, nurture into a community, THEN build the product. Started and sold 3 community companies. Invested in 50+ community businesses. The product is always last.', firepitAction: 'Firepit should be building audience NOW on TikTok — connection content, no app push. The community forms around the content. The app comes when they\'re already hooked on the brand.' },
+                { founder: 'Greg Isenberg', title: 'Test one content format per business day. The one that hits? Go all in.', insight: 'Most founders post 3 things, get no traction, quit. His approach: test a new format every single day for a month. When saves/shares spike, drop everything else and double down. Speed of iteration beats quality of any single post.', firepitAction: 'Run 5 content experiments per week for the next month. Quote cards, street interviews, couple reactions, question-of-the-day, behind-the-scenes. Find the one that saves. Then 10x it.' },
+                { founder: 'Greg Isenberg', title: 'Best communities look like cults from outside and families from inside', insight: 'Outsiders should think "what is this?" Insiders should feel "I belong." Shared language, rituals, inside jokes, a belief system not everyone gets. That exclusivity isn\'t gatekeeping — it\'s identity.', firepitAction: 'Firepit needs its own language. "Light the spark" is a start. "Campfire Moment" for deep conversations. "Truth mode" vs "Fun mode." "Spark someone" = share a question. The vocabulary creates the tribe.' },
+                { founder: 'Zach Yadegari (Cal AI — $30M ARR, sold to MyFitnessPal at 18)', title: 'Skip agencies. DM micro-influencers directly. Start with "Paid promo?"', insight: 'Hit $1M MRR in 6 months through TikTok. No agencies. DMed creators directly — "Paid promo?" in the first line shows in DM preview. Micro-influencers outperform celebrities 10:1. Most give up after 100 DMs. He sent thousands.', firepitAction: 'Build a list of 500 micro-creators in connection/vulnerability/dating/friendship. DM all of them. The Creator Radar tab is your starting list. Volume wins.' },
+                { founder: 'Zach Yadegari (Cal AI)', title: 'One clear prompt per creator. Show the single thing.', insight: 'Cal AI brief to creators: show yourself scanning food. That\'s it. No scripts, no 20-slide brand guide. Simplicity = authenticity. Every video felt real because it was. 15 million downloads.', firepitAction: 'Creator brief = one line: "Film yourself and a friend pulling a Firepit card and answering honestly." The reaction IS the ad. Don\'t over-brief.' },
+                { founder: 'Zach Yadegari (Cal AI)', title: 'Hook in 3 seconds or you\'re dead. Show the result first.', insight: 'Tested dozens of hooks. Winners always showed the result immediately: food → scan → calories. Value clear in 3 seconds. Videos that explained first always died. Show, don\'t tell.', firepitAction: 'Firepit hook formula: open on the REACTION to the question, not the question itself. Show the face changing — laughing, crying, going silent. THEN reveal the card. Emotion first.' },
+                { founder: 'Nick Jones (Soho House founder)', title: 'You can\'t suddenly make a community. It grows organically or not at all.', insight: 'Same members from 25 years ago. Their children now joining. Started by recruiting "like-minded creative types" as membership committees in each city. Small, organic, word-of-mouth. Never forced scale.', firepitAction: 'Seed city by city. Find 10 founding members per city who already host dinner parties, book clubs, conversation nights. Give them Firepit. Let them build local community. Soho House model: local first, global later.' },
+                { founder: 'Nick Jones (Soho House)', title: 'Creativity over net worth. Values over status. That\'s the filter.', insight: 'Filters members on creativity "above net worth and job titles." Favours moral values over financial success. People belong because of WHO they are, not WHAT they earn. Creates genuine community, not status symbol.', firepitAction: 'If Firepit does premium: filter on values. "Are you someone who believes in real conversation?" Self-selection IS the community building.' },
+                { founder: 'Nick Jones (Soho House)', title: 'Happy members and everything else looks after itself', insight: 'All about the members. If they\'re happy, retention is high, word-of-mouth strong, growth organic. Obsesses over experience, not marketing funnel. The experience IS the marketing.', firepitAction: 'Single metric: "After using Firepit, did you have a conversation that mattered?" If yes, everything else follows. Obsess over the moment, not the funnel.' },
+                { founder: 'River (IRL community platform)', title: 'People want to be in rooms together again. The hunger is real.', insight: 'River orchestrates dinners and meetups for communities. Every week more IRL events. The pendulum has swung from digital to physical. AI Tinkerers: 91K members, 205 cities, 231 events in 90 days.', firepitAction: '"Firepit Evenings" — hosted conversation nights at cafes, co-working spaces. 20 people, cards, filmed with permission. ONE real event feeds a month of social content.' },
+                { founder: 'Alex Slater (QUITTR — 300K users, bootstrapped)', title: 'Users supporting each other IS the product. The app is just the container.', insight: 'QUITTR\'s community model: users celebrate milestones, normalise hard conversations. 300K users, no VC. The community IS the product. The app just holds it.', firepitAction: '"Firepit Circles" — small groups (5-8) doing a weekly question together. The group vulnerability creates bonds the app alone can\'t.' },
+                { founder: 'Alex Slater (QUITTR)', title: 'One metric. Conversations started per week. Everything else is noise.', insight: 'Cut everything not directly driving the one metric that matters. For QUITTR: daily active community users. Focus beats breadth every time.', firepitAction: 'North star: "Conversations started per week." Not downloads. Not DAU. Not revenue. If that number goes up, everything follows.' },
+                { founder: 'Sahil Lavingia (Gumroad)', title: 'The best platforms disappear. They don\'t insert themselves between people.', insight: 'Gumroad succeeded by being invisible — just a link between creator and buyer. The less the platform is noticed, the better it\'s working.', firepitAction: 'Firepit should disappear during the conversation. Open, question appears, then shut up. No mid-conversation notifications. No "share this moment" popups. Start the conversation, then get out of the way.' },
+                { founder: 'David Perell (Write of Passage)', title: 'Build a personal monopoly — the intersection nobody else owns', insight: 'Best brands compete on worldview, not features. Double down on what makes you weird, specific, unreplicable. Your monopoly is the intersection of skills, interests, and personality.', firepitAction: 'Firepit\'s monopoly: game design + emotional intelligence + digital-to-analog bridge. Nobody else combines card mechanics with AI personalisation with genuine warmth. That combination is the moat.' },
+                { founder: 'Esther Perel (relationship therapist/author)', title: 'Curiosity is a balm for loneliness', insight: '"We\'ve never been more free and never more alone." Genuine curiosity about another person is the antidote to isolation. Asking how someone came to think this way communicates care.', firepitAction: 'Use her framing: "Curiosity is a balm for loneliness. Firepit gives you the questions that prove it." She\'s describing Firepit\'s thesis.' },
+                { founder: 'Brené Brown (researcher/author)', title: 'You cannot have connection without vulnerability', insight: '"Staying vulnerable is a risk we have to take if we want connection." Connection happens when people feel seen, heard, valued without judgment.', firepitAction: 'Firepit\'s depth slider (Truth ↔ Fun) IS safe vulnerability. Let people choose comfort level. The safety IS the feature.' },
+            ]
+        };
+
+        function renderFounders() {
+            const elan = document.getElementById('elanInsights');
+            const koreen = document.getElementById('koreenInsights');
+            const more = document.getElementById('moreFounders');
+            const actions = document.getElementById('firepitActions');
+            if (!elan) return;
+
+            function renderInsight(item) {
+                const isSocial = item.type === 'social';
+                return '<div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-radius:12px;padding:20px;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 12px 40px rgba(0,0,0,0.3)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:10px;padding:3px 8px;border-radius:10px;background:' + (isSocial ? 'rgba(74,155,142,0.15)' : 'rgba(232,93,38,0.15)') + ';color:' + (isSocial ? 'var(--teal)' : 'var(--ember-orange)') + '">' + (isSocial ? 'Social/Growth' : 'Core Principle') + '</span>' +
+                    (item.url ? '<a href="' + item.url + '" target="_blank" style="font-size:10px;color:var(--ember-orange);text-decoration:none;opacity:0.7">Source ↗</a>' : '') + '</div>' +
+                    '<div style="font-family:Playfair Display,serif;font-size:15px;font-weight:600;color:var(--cream);line-height:1.4;margin-bottom:10px">"' + item.title + '"</div>' +
+                    '<div style="font-size:12px;color:#AAA;line-height:1.6;margin-bottom:12px">' + item.insight + '</div>' +
+                    '<div style="padding:10px 12px;background:rgba(232,93,38,0.06);border:1px solid rgba(232,93,38,0.12);border-radius:8px"><div style="font-size:10px;color:var(--ember-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔥 Firepit Action</div><div style="font-size:12px;color:var(--cream);line-height:1.5">' + item.firepitAction + '</div></div>' +
+                    '</div>';
+            }
+
+            elan.innerHTML = foundersData.elan.map(renderInsight).join('');
+            koreen.innerHTML = foundersData.koreen.map(renderInsight).join('');
+
+            more.innerHTML = foundersData.more.map(item =>
+                '<div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-radius:12px;padding:20px;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 12px 40px rgba(0,0,0,0.3)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">' +
+                '<div style="font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(212,168,75,0.15);color:var(--gold);display:inline-block;margin-bottom:10px">' + item.founder + '</div>' +
+                '<div style="font-family:Playfair Display,serif;font-size:15px;font-weight:600;color:var(--cream);line-height:1.4;margin-bottom:10px">"' + item.title + '"</div>' +
+                '<div style="font-size:12px;color:#AAA;line-height:1.6;margin-bottom:12px">' + item.insight + '</div>' +
+                '<div style="padding:10px 12px;background:rgba(232,93,38,0.06);border:1px solid rgba(232,93,38,0.12);border-radius:8px"><div style="font-size:10px;color:var(--ember-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔥 Firepit Action</div><div style="font-size:12px;color:var(--cream);line-height:1.5">' + item.firepitAction + '</div></div>' +
+                '</div>'
+            ).join('');
+
+            actions.innerHTML = [
+                { priority: 'NOW', action: 'Get to the fun in 60 seconds. Firepit onboarding should be: "Who\'s with you?" → First card. No sign-up wall, no tutorial.', source: 'Elan Lee' },
+                { priority: 'NOW', action: 'Film 10 real people using Firepit for the first time. Raw, lo-fi, phone footage. Their reactions ARE the marketing.', source: 'Casey Neistat + Elan Lee' },
+                { priority: 'THIS WEEK', action: 'Build Firepit\'s social community BEFORE pushing the app. Value-driven content on TikTok and Instagram. 90% value, 10% product.', source: 'Koreen Odiney' },
+                { priority: 'THIS MONTH', action: 'Launch a "Community Cards" campaign — let users submit questions. Top-voted become official Firepit cards. Co-creation drives ownership.', source: 'Emily Weiss + Elan Lee' },
+                { priority: 'THIS QUARTER', action: 'Hand-pick 50 founding users. Personal voice notes. Private group. Make them feel like co-founders. They become your evangelists.', source: 'Brian Chesky' },
+                { priority: 'ALWAYS', action: 'Every feature passes the 5-second TikTok test. If you can\'t film someone using it and have a viewer instantly get it, simplify.', source: 'Elan Lee' },
+            ].map(item =>
+                '<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06)">' +
+                '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:' + (item.priority === 'NOW' ? 'var(--ember-orange)' : item.priority === 'ALWAYS' ? 'var(--gold)' : 'var(--teal)') + ';color:' + (item.priority === 'NOW' || item.priority === 'ALWAYS' ? 'white' : 'white') + ';font-weight:700;white-space:nowrap;height:fit-content">' + item.priority + '</span>' +
+                '<div><div style="font-size:13px;color:var(--cream);line-height:1.5">' + item.action + '</div><div style="font-size:11px;color:#888;margin-top:4px">— ' + item.source + '</div></div></div>'
+            ).join('');
+        }
+
+        // Initialize feed on page load
+        window.addEventListener('load', () => {
+            renderFeed('all');
+        });
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
