@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Spark Board v3 — Firepit</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1541,6 +1542,398 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- DIGITAL INTELLIGENCE — POWERED BY SUPABASE -->
+                <div style="margin-top:32px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:16px" id="swHeader">📊 Digital Intelligence — SimilarWeb (loading...)</div>
+
+                    <!-- TRAFFIC OVERVIEW TABLE -->
+                    <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:20px">
+                        <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:16px">Monthly Web Traffic — Latest</div>
+                        <table id="trafficTable" style="width:100%;border-collapse:collapse;font-size:12px">
+                            <thead>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.08)">
+                                    <th style="text-align:left;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Brand</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Visits/mo</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Unique Visitors</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Bounce Rate</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Avg Duration</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">Pages/Visit</th>
+                                    <th style="text-align:right;padding:10px 8px;color:#888;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px">3mo Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td style="padding:10px 8px;color:var(--cream);font-weight:600">Bumble</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--text-light);font-family:'Playfair Display',serif;font-weight:700">11.3M</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">3.09M</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--teal)">29.8%</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">4m 22s</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">3.1</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">-1.5%</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td style="padding:10px 8px;color:var(--cream);font-weight:600">Hinge</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--text-light);font-family:'Playfair Display',serif;font-weight:700">2.04M</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">1.27M</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--terracotta)">53.3%</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">0m 51s</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">1.9</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--teal)">+12.6%</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td style="padding:10px 8px;color:var(--cream);font-weight:600">CAH</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--text-light);font-family:'Playfair Display',serif;font-weight:700">197K</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">117K</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">45.9%</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">0m 39s</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">1.9</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--terracotta)">-43.6%</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td style="padding:10px 8px;color:var(--cream);font-weight:600">WNRS</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--text-light);font-family:'Playfair Display',serif;font-weight:700">163K</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">89K</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">42.7%</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">0m 59s</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#AAA">2.9</td>
+                                    <td style="padding:10px 8px;text-align:right;color:var(--terracotta)">-24.3%</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                                    <td style="padding:10px 8px;color:#888;font-weight:600">The And</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#666;font-size:11px" colspan="6">~1K visits (Dec only) — too small for reliable web data. Brand lives on YouTube/social.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 8px;color:#888;font-weight:600">Vertellis</td>
+                                    <td style="padding:10px 8px;text-align:right;color:#666;font-size:11px" colspan="6">Below SimilarWeb threshold — niche DTC brand, likely &lt;5K visits/mo.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- TRAFFIC SOURCES COMPARISON -->
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px">
+                        <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:20px">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:14px">Traffic Sources — Where They Get Visitors</div>
+                            <!-- WNRS -->
+                            <div style="margin-bottom:14px">
+                                <div style="font-size:11px;font-weight:600;color:var(--cream);margin-bottom:6px">WNRS</div>
+                                <div style="display:flex;height:18px;border-radius:6px;overflow:hidden;margin-bottom:4px">
+                                    <div style="width:47.5%;background:var(--ember-orange)" title="Direct 47.5%"></div>
+                                    <div style="width:34.3%;background:var(--teal)" title="Organic 34.3%"></div>
+                                    <div style="width:9.4%;background:var(--gold)" title="Social 9.4%"></div>
+                                    <div style="width:4.8%;background:var(--terracotta)" title="Paid 4.8%"></div>
+                                    <div style="width:4%;background:#555" title="Other 4%"></div>
+                                </div>
+                                <div style="display:flex;gap:12px;font-size:9px;color:#888"><span><span style="color:var(--ember-orange)">●</span> Direct 47%</span><span><span style="color:var(--teal)">●</span> Organic 34%</span><span><span style="color:var(--gold)">●</span> Social 9%</span><span><span style="color:var(--terracotta)">●</span> Paid 5%</span></div>
+                            </div>
+                            <!-- Hinge -->
+                            <div style="margin-bottom:14px">
+                                <div style="font-size:11px;font-weight:600;color:var(--cream);margin-bottom:6px">Hinge</div>
+                                <div style="display:flex;height:18px;border-radius:6px;overflow:hidden;margin-bottom:4px">
+                                    <div style="width:55.9%;background:var(--teal)" title="Organic 55.9%"></div>
+                                    <div style="width:37.7%;background:var(--ember-orange)" title="Direct 37.7%"></div>
+                                    <div style="width:3%;background:var(--gold)" title="Social 3%"></div>
+                                    <div style="width:2%;background:#555" title="Referrals 2%"></div>
+                                    <div style="width:1.4%;background:var(--terracotta)" title="Paid 1%"></div>
+                                </div>
+                                <div style="display:flex;gap:12px;font-size:9px;color:#888"><span><span style="color:var(--teal)">●</span> Organic 56%</span><span><span style="color:var(--ember-orange)">●</span> Direct 38%</span><span><span style="color:var(--gold)">●</span> Social 3%</span><span><span style="color:var(--terracotta)">●</span> Paid 1%</span></div>
+                            </div>
+                            <!-- Bumble -->
+                            <div style="margin-bottom:14px">
+                                <div style="font-size:11px;font-weight:600;color:var(--cream);margin-bottom:6px">Bumble</div>
+                                <div style="display:flex;height:18px;border-radius:6px;overflow:hidden;margin-bottom:4px">
+                                    <div style="width:73.4%;background:var(--ember-orange)" title="Direct 73.4%"></div>
+                                    <div style="width:23.4%;background:var(--teal)" title="Organic 23.4%"></div>
+                                    <div style="width:1.4%;background:var(--gold)" title="Social 1.4%"></div>
+                                    <div style="width:1.4%;background:#555" title="Referrals 1.4%"></div>
+                                    <div style="width:0.4%;background:var(--terracotta)" title="Paid 0.4%"></div>
+                                </div>
+                                <div style="display:flex;gap:12px;font-size:9px;color:#888"><span><span style="color:var(--ember-orange)">●</span> Direct 73%</span><span><span style="color:var(--teal)">●</span> Organic 23%</span><span><span style="color:var(--gold)">●</span> Social 1%</span></div>
+                            </div>
+                            <!-- CAH -->
+                            <div>
+                                <div style="font-size:11px;font-weight:600;color:var(--cream);margin-bottom:6px">Cards Against Humanity</div>
+                                <div style="display:flex;height:18px;border-radius:6px;overflow:hidden;margin-bottom:4px">
+                                    <div style="width:71.4%;background:var(--teal)" title="Organic 71.4%"></div>
+                                    <div style="width:23.5%;background:var(--ember-orange)" title="Direct 23.5%"></div>
+                                    <div style="width:2.6%;background:#555" title="Referrals 2.6%"></div>
+                                    <div style="width:2.2%;background:var(--gold)" title="Social 2.2%"></div>
+                                    <div style="width:0.3%;background:var(--terracotta)" title="Paid 0.3%"></div>
+                                </div>
+                                <div style="display:flex;gap:12px;font-size:9px;color:#888"><span><span style="color:var(--teal)">●</span> Organic 71%</span><span><span style="color:var(--ember-orange)">●</span> Direct 24%</span><span><span style="color:var(--gold)">●</span> Social 2%</span></div>
+                            </div>
+                        </div>
+
+                        <!-- DEMOGRAPHICS -->
+                        <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:20px">
+                            <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:14px">Audience Demographics</div>
+                            <!-- Gender bars -->
+                            <div style="margin-bottom:18px">
+                                <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px">Gender Split</div>
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <div style="width:60px;font-size:11px;color:var(--cream);font-weight:600">WNRS</div>
+                                    <div style="flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden">
+                                        <div style="width:59%;background:var(--terracotta)" title="Female 59%"></div>
+                                        <div style="width:41%;background:var(--teal)" title="Male 41%"></div>
+                                    </div>
+                                    <div style="font-size:10px;color:#AAA;width:80px;text-align:right"><span style="color:var(--terracotta)">59% F</span> / <span style="color:var(--teal)">41% M</span></div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <div style="width:60px;font-size:11px;color:var(--cream);font-weight:600">Hinge</div>
+                                    <div style="flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden">
+                                        <div style="width:43%;background:var(--terracotta)" title="Female 43%"></div>
+                                        <div style="width:57%;background:var(--teal)" title="Male 57%"></div>
+                                    </div>
+                                    <div style="font-size:10px;color:#AAA;width:80px;text-align:right"><span style="color:var(--terracotta)">43% F</span> / <span style="color:var(--teal)">57% M</span></div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <div style="width:60px;font-size:11px;color:var(--cream);font-weight:600">Bumble</div>
+                                    <div style="flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden">
+                                        <div style="width:40%;background:var(--terracotta)" title="Female 40%"></div>
+                                        <div style="width:60%;background:var(--teal)" title="Male 60%"></div>
+                                    </div>
+                                    <div style="font-size:10px;color:#AAA;width:80px;text-align:right"><span style="color:var(--terracotta)">40% F</span> / <span style="color:var(--teal)">60% M</span></div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div style="width:60px;font-size:11px;color:var(--cream);font-weight:600">CAH</div>
+                                    <div style="flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden">
+                                        <div style="width:37%;background:var(--terracotta)" title="Female 37%"></div>
+                                        <div style="width:63%;background:var(--teal)" title="Male 63%"></div>
+                                    </div>
+                                    <div style="font-size:10px;color:#AAA;width:80px;text-align:right"><span style="color:var(--terracotta)">37% F</span> / <span style="color:var(--teal)">63% M</span></div>
+                                </div>
+                            </div>
+                            <!-- Age breakdown -->
+                            <div>
+                                <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px">Age Distribution (% under 35)</div>
+                                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                                    <div style="text-align:center;padding:10px;background:rgba(232,93,38,0.06);border-radius:8px;border:1px solid rgba(232,93,38,0.1)">
+                                        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold)">62%</div>
+                                        <div style="font-size:10px;color:#AAA;margin-top:2px">CAH</div>
+                                        <div style="font-size:9px;color:#666">youngest audience</div>
+                                    </div>
+                                    <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.04)">
+                                        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">54%</div>
+                                        <div style="font-size:10px;color:#AAA;margin-top:2px">WNRS</div>
+                                        <div style="font-size:9px;color:#666">20% are 18-24</div>
+                                    </div>
+                                    <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.04)">
+                                        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">51%</div>
+                                        <div style="font-size:10px;color:#AAA;margin-top:2px">Hinge</div>
+                                        <div style="font-size:9px;color:#666">31% are 25-34</div>
+                                    </div>
+                                    <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.04)">
+                                        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">48%</div>
+                                        <div style="font-size:10px;color:#AAA;margin-top:2px">Bumble</div>
+                                        <div style="font-size:9px;color:#666">32% are 25-34</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STRATEGIC INSIGHTS FROM DATA -->
+                    <div style="background:linear-gradient(135deg, rgba(42,37,32,0.8), rgba(26,26,26,0.9));border:1px solid rgba(232,93,38,0.2);border-radius:14px;padding:24px">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:14px">🔥 What This Means for Firepit</div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">WNRS is bleeding traffic (-24%)</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">Your closest competitor dropped from 216K to 163K visits in 3 months. Their social traffic is shrinking fastest (-33%). This is your window — their audience is looking for something fresh.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">WNRS owns the female audience</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">59% female — the only competitor with female-majority web traffic. Hinge (57% M), Bumble (60% M), and CAH (63% M) all skew male. Firepit should target this same female 25-34 audience that WNRS is losing.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--teal)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Social drives WNRS, not dating apps</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">WNRS gets 9.4% from social (highest %). Hinge/Bumble are direct/search dominated (73%+ direct for Bumble). Firepit's social-first strategy matches the card game playbook, not the dating app playbook.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--terracotta)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">CAH is crashing hard (-44%)</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">349K → 197K in 3 months. Their "Deep Sh*t" serious expansion isn't driving web traffic. The serious card game space wants authenticity, not a comedy brand pivoting. Firepit is authentic from day one.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Hinge is the only one growing</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">+12.6% over 3 months. They're investing in organic search (56% of traffic) and depth features. The market wants depth — Hinge's growth validates Firepit's thesis. But they're a dating app. Firepit serves all relationships.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Engagement gap = Firepit's edge</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">Bumble users spend 4m 22s on site. WNRS: 59s. Hinge: 51s. CAH: 39s. Deep engagement exists — only Bumble achieves it (via the app). A conversation-first product should aim for Bumble-level stickiness.</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px;padding:14px;background:rgba(232,93,38,0.04);border-radius:10px;border:1px solid rgba(232,93,38,0.1)">
+                            <div style="font-size:12px;color:#CCC;line-height:1.6"><strong style="color:var(--cream)">Bottom line:</strong> The "connection" category is fragmenting. Card game brands (WNRS, CAH) are shrinking while dating apps (Hinge) grow. Firepit sits between both — not a card game, not a dating app, but a <strong style="color:var(--ember-orange)">conversation platform</strong>. Target WNRS's departing female 25-34 audience with social-first content. Build for Bumble-level engagement. Move now — the window is open.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOCIAL INTELLIGENCE — APIFY TIKTOK DATA (Live: April 2026) -->
+                <div style="margin-top:32px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:16px">📱 Social Intelligence — TikTok (Live via Apify)</div>
+
+                    <!-- TIKTOK PROFILE COMPARISON -->
+                    <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:20px">
+                        <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:16px">TikTok Profile Comparison — Competitor Accounts</div>
+                        <div id="tiktokProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px">
+                            <!-- WNRS -->
+                            <div style="background:rgba(232,93,38,0.06);border:1px solid rgba(232,93,38,0.15);border-radius:12px;padding:16px;text-align:center">
+                                <div style="font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px">@werenotreallystrangers</div>
+                                <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--ember-orange);margin:8px 0">6.0M</div>
+                                <div style="font-size:10px;color:#888;margin-bottom:10px">followers</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">359.6M</div><div style="color:#666">total hearts</div></div>
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">1,544</div><div style="color:#666">videos</div></div>
+                                </div>
+                                <div style="margin-top:10px;padding:8px;background:rgba(232,93,38,0.08);border-radius:6px;font-size:10px;color:var(--ember-orange);font-weight:600">Top post: 7.7M plays</div>
+                            </div>
+                            <!-- Bumble -->
+                            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;text-align:center">
+                                <div style="font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px">@bumble</div>
+                                <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--text-light);margin:8px 0">215K</div>
+                                <div style="font-size:10px;color:#888;margin-bottom:10px">followers</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">3.3M</div><div style="color:#666">total hearts</div></div>
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">1,212</div><div style="color:#666">videos</div></div>
+                                </div>
+                                <div style="margin-top:10px;padding:8px;background:rgba(198,123,92,0.08);border-radius:6px;font-size:10px;color:var(--terracotta);font-weight:600">Avg post: ~5K plays</div>
+                            </div>
+                            <!-- Hinge -->
+                            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;text-align:center">
+                                <div style="font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px">@hinge</div>
+                                <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--text-light);margin:8px 0">120K</div>
+                                <div style="font-size:10px;color:#888;margin-bottom:10px">followers</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">3.1M</div><div style="color:#666">total hearts</div></div>
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">4</div><div style="color:#666">videos</div></div>
+                                </div>
+                                <div style="margin-top:10px;padding:8px;background:rgba(198,123,92,0.08);border-radius:6px;font-size:10px;color:var(--terracotta);font-weight:600">Nearly dormant (4 posts)</div>
+                            </div>
+                            <!-- CAH -->
+                            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;text-align:center">
+                                <div style="font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px">@cardsagainsthumanity</div>
+                                <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--text-light);margin:8px 0">4.8K</div>
+                                <div style="font-size:10px;color:#888;margin-bottom:10px">followers</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">18.6K</div><div style="color:#666">total hearts</div></div>
+                                    <div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">5</div><div style="color:#666">videos</div></div>
+                                </div>
+                                <div style="margin-top:10px;padding:8px;background:rgba(198,123,92,0.08);border-radius:6px;font-size:10px;color:var(--terracotta);font-weight:600">Basically absent from TikTok</div>
+                            </div>
+                        </div>
+
+                        <!-- ENGAGEMENT REALITY CHECK -->
+                        <div style="padding:14px;background:rgba(212,168,75,0.04);border:1px solid rgba(212,168,75,0.1);border-radius:10px">
+                            <div style="font-size:12px;color:#CCC;line-height:1.6"><strong style="color:var(--cream)">The gap is massive:</strong> WNRS has <strong style="color:var(--ember-orange)">28x more followers</strong> than Bumble, <strong style="color:var(--ember-orange)">50x more</strong> than Hinge, and <strong style="color:var(--ember-orange)">1,250x more</strong> than CAH on TikTok. But even WNRS struggles — their recent product launch posts get &lt;5K plays while emotional content gets 7M+. <strong style="color:var(--gold)">The algorithm rewards vulnerability, not promotion.</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- TRENDING HASHTAGS — LIVE DATA -->
+                    <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:20px">
+                        <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:16px">Trending Hashtags — Live TikTok Data</div>
+                        <div id="hashtagGrid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px">
+                            <div style="text-align:center;padding:14px;background:rgba(232,93,38,0.06);border-radius:10px;border:1px solid rgba(232,93,38,0.1)">
+                                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ember-orange)">19.7M</div>
+                                <div style="font-size:10px;color:#AAA;margin-top:4px">#conversationstarters</div>
+                                <div style="font-size:9px;color:#666">top post plays</div>
+                                <div style="font-size:9px;color:var(--teal);margin-top:4px">@chloetayloruk</div>
+                            </div>
+                            <div style="text-align:center;padding:14px;background:rgba(212,168,75,0.06);border-radius:10px;border:1px solid rgba(212,168,75,0.1)">
+                                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)">11M</div>
+                                <div style="font-size:10px;color:#AAA;margin-top:4px">#36questions</div>
+                                <div style="font-size:9px;color:#666">top post plays</div>
+                                <div style="font-size:9px;color:var(--teal);margin-top:4px">@trykaratofficial</div>
+                            </div>
+                            <div style="text-align:center;padding:14px;background:rgba(74,155,142,0.06);border-radius:10px;border:1px solid rgba(74,155,142,0.1)">
+                                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--teal)">8.3M</div>
+                                <div style="font-size:10px;color:#AAA;margin-top:4px">#conversationstarters</div>
+                                <div style="font-size:9px;color:#666">"5 starters you need"</div>
+                                <div style="font-size:9px;color:var(--teal);margin-top:4px">@_truecam</div>
+                            </div>
+                            <div style="text-align:center;padding:14px;background:rgba(198,123,92,0.06);border-radius:10px;border:1px solid rgba(198,123,92,0.1)">
+                                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--terracotta)">3.0M</div>
+                                <div style="font-size:10px;color:#AAA;margin-top:4px">#friendshipbreakup</div>
+                                <div style="font-size:9px;color:#666">"you are not alone"</div>
+                                <div style="font-size:9px;color:var(--teal);margin-top:4px">@devriebrynn</div>
+                            </div>
+                            <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06)">
+                                <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream)">1.7M</div>
+                                <div style="font-size:10px;color:#AAA;margin-top:4px">#deepconversations</div>
+                                <div style="font-size:9px;color:#666">"questions from notes"</div>
+                                <div style="font-size:9px;color:var(--teal);margin-top:4px">@jacksonpenney</div>
+                            </div>
+                        </div>
+
+                        <!-- TOP PERFORMING CONTENT -->
+                        <div style="font-size:11px;font-weight:600;color:var(--cream);margin-bottom:10px">Top Performing Content Right Now</div>
+                        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+                            <div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid var(--ember-orange)">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                                    <span style="font-size:10px;color:var(--ember-orange);font-weight:600">@werenotreallystrangers</span>
+                                    <span style="font-size:10px;color:var(--gold);font-weight:700">7.7M plays</span>
+                                </div>
+                                <div style="font-size:11px;color:#CCC;line-height:1.4">"I always think I have nothing to say or feel until I give myself an unfiltered space to write" — journal prompts content</div>
+                                <div style="font-size:9px;color:#888;margin-top:4px">321K likes · 9.8K shares · 711 comments</div>
+                            </div>
+                            <div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid var(--ember-orange)">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                                    <span style="font-size:10px;color:var(--ember-orange);font-weight:600">@werenotreallystrangers</span>
+                                    <span style="font-size:10px;color:var(--gold);font-weight:700">6.7M plays</span>
+                                </div>
+                                <div style="font-size:11px;color:#CCC;line-height:1.4">"The fourth one is so important and I feel like nobody ever talks about it" — relationship tips</div>
+                                <div style="font-size:9px;color:#888;margin-top:4px">246K likes · 25.5K shares · 382 comments</div>
+                            </div>
+                            <div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid var(--gold)">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                                    <span style="font-size:10px;color:var(--teal);font-weight:600">@trykaratofficial</span>
+                                    <span style="font-size:10px;color:var(--gold);font-weight:700">11M plays</span>
+                                </div>
+                                <div style="font-size:11px;color:#CCC;line-height:1.4">"36 Questions to Fall in Love" — tags #werenotreallystrangers. Non-brand creator outperforming the brand itself.</div>
+                                <div style="font-size:9px;color:#888;margin-top:4px">1.8M likes · References WNRS brand</div>
+                            </div>
+                            <div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid var(--teal)">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                                    <span style="font-size:10px;color:var(--teal);font-weight:600">@chloetayloruk</span>
+                                    <span style="font-size:10px;color:var(--gold);font-weight:700">19.7M plays</span>
+                                </div>
+                                <div style="font-size:11px;color:#CCC;line-height:1.4">"Conversation starters for talking to your crush (late night deep chat edition)" — lo-fi, personal, massive reach</div>
+                                <div style="font-size:9px;color:#888;margin-top:4px">1.6M likes · Exactly Firepit's format</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SOCIAL STRATEGIC INSIGHTS -->
+                    <div style="background:linear-gradient(135deg, rgba(42,37,32,0.8), rgba(26,26,26,0.9));border:1px solid rgba(212,168,75,0.2);border-radius:14px;padding:24px">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:14px">⚡ Social Playbook — What the Data Says</div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">WNRS = the only TikTok competitor</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">6M followers vs everyone else combined (~340K). Hinge has 4 videos. CAH has 5. Bumble posts often but gets ~5K plays. WNRS IS the category on TikTok. Your real benchmark is them, not dating apps.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Creators outperform brands 2:1</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">@trykaratofficial got 11M plays on a #36questions video tagging WNRS. @chloetayloruk got 19.7M on conversation starters. Independent creators are making Firepit-style content that outperforms the brands themselves.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--teal)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Vulnerability > Promotion (10x)</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">WNRS emotional content: 6-7M plays. WNRS product launch: 793 plays. That's an 8,000x gap. The algorithm is crystal clear — never lead with product, always lead with feeling. Firepit should NEVER post "check out our new deck."</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--terracotta)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">#friendshipbreakup = emotional goldmine</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">3M+ plays on raw, personal friendship breakup videos. @devriebrynn, @strongmindpodcast, @iimsuchafoolforu all hit 1M+ with simple, emotional takes. This is Firepit's lane — make "Processing" deck content here.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--gold)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">Male loneliness = emerging wave</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5">@mentalhealness (486K plays), @cypher.j (2.1M plays) on male loneliness content. WNRS's audience is 59% female. There's an underserved male audience craving connection content. Firepit could own this niche.</div>
+                            </div>
+                            <div style="padding:14px;background:rgba(42,42,42,0.6);border-radius:10px;border-left:3px solid var(--ember-orange)">
+                                <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:6px">DM these 3 creators TODAY</div>
+                                <div style="font-size:11px;color:#AAA;line-height:1.5"><strong style="color:var(--cream)">@jacksonpenney</strong> (1.7M plays, question-from-notes format). <strong style="color:var(--cream)">@devriebrynn</strong> (3M plays, friendship vulnerability). <strong style="color:var(--cream)">@withbettertogether</strong> (200K plays, deep conversation prompts). All making Firepit content without Firepit.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <!-- FOUNDERS LAB TAB -->
             <div class="tab-content" data-tab="founders">
@@ -2403,6 +2796,153 @@
         // Close modal on escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
+        });
+
+        // ─── SUPABASE LIVE DATA ───
+        const SUPABASE_URL = 'https://bgmjhnmgwwjcevmxaelf.supabase.co';
+        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnbWpobm1nd3dqY2V2bXhhZWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MjI2NTAsImV4cCI6MjA5MTQ5ODY1MH0.0Md1_0pYmWzao18_SDtUtupu6qqkIgoYsumtqlkVfB4';
+
+        async function loadLiveData() {
+            if (!window.supabase) return;
+            const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+            // ── Traffic table ──
+            const { data: traffic } = await sb.from('web_traffic').select('*').order('month', { ascending: false });
+            if (traffic && traffic.length) {
+                const latestMonth = traffic[0].month;
+                const latest = traffic.filter(r => r.month === latestMonth);
+                const prevMonths = traffic.filter(r => r.month !== latestMonth);
+
+                // Update header with date
+                const hdr = document.getElementById('swHeader');
+                if (hdr) {
+                    const d = new Date(latestMonth);
+                    const mo = d.toLocaleString('en', { month: 'long', year: 'numeric' });
+                    hdr.textContent = '📊 Digital Intelligence — SimilarWeb (' + mo + ')';
+                }
+
+                const table = document.getElementById('trafficTable');
+                if (table) {
+                    const tbody = table.querySelector('tbody');
+                    if (tbody) {
+                        const fmt = (n) => {
+                            if (!n) return '—';
+                            if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+                            if (n >= 1e3) return Math.round(n/1e3) + 'K';
+                            return Math.round(n).toLocaleString();
+                        };
+                        const fmtDur = (s) => {
+                            if (!s) return '—';
+                            const m = Math.floor(s/60), sec = Math.round(s%60);
+                            return m + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
+                        };
+                        const trend = (brand) => {
+                            const all = traffic.filter(r => r.brand === brand).sort((a,b) => a.month.localeCompare(b.month));
+                            if (all.length < 2) return { pct: 0, str: '—' };
+                            const first = all[0].visits, last = all[all.length-1].visits;
+                            if (!first) return { pct: 0, str: '—' };
+                            const p = ((last - first) / first * 100);
+                            return { pct: p, str: (p >= 0 ? '+' : '') + p.toFixed(1) + '%' };
+                        };
+
+                        const sorted = latest.sort((a,b) => (b.visits||0) - (a.visits||0));
+                        let html = '';
+                        for (const r of sorted) {
+                            const t = trend(r.brand);
+                            const tColor = t.pct > 5 ? 'var(--teal)' : t.pct < -5 ? 'var(--terracotta)' : '#AAA';
+                            const brColor = (r.bounce_rate||0) < 0.35 ? 'var(--teal)' : (r.bounce_rate||0) > 0.5 ? 'var(--terracotta)' : '#AAA';
+                            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">'
+                                + '<td style="padding:10px 8px;color:var(--cream);font-weight:600">' + r.brand + '</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:var(--text-light);font-family:\'Playfair Display\',serif;font-weight:700">' + fmt(r.visits) + '</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:#AAA">' + fmt(r.unique_visitors) + '</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:' + brColor + '">' + ((r.bounce_rate||0)*100).toFixed(1) + '%</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:#AAA">' + fmtDur(r.avg_visit_duration) + '</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:#AAA">' + (r.pages_per_visit||0).toFixed(1) + '</td>'
+                                + '<td style="padding:10px 8px;text-align:right;color:' + tColor + '">' + t.str + '</td>'
+                                + '</tr>';
+                        }
+                        tbody.innerHTML = html;
+                    }
+                }
+            }
+
+            // ── TikTok profiles ──
+            const { data: profiles } = await sb.from('tiktok_profiles').select('*').order('fetched_at', { ascending: false });
+            if (profiles && profiles.length) {
+                // Dedupe: keep latest per username
+                const seen = {};
+                const unique = [];
+                for (const p of profiles) {
+                    if (!seen[p.username]) { seen[p.username] = true; unique.push(p); }
+                }
+                unique.sort((a,b) => (b.followers||0) - (a.followers||0));
+
+                const el = document.getElementById('tiktokProfiles');
+                if (el) {
+                    const fmt = (n) => {
+                        if (!n) return '0';
+                        if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+                        if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+                        return n.toLocaleString();
+                    };
+                    const colors = ['var(--ember-orange)', 'var(--text-light)', 'var(--text-light)', 'var(--text-light)'];
+                    let html = '';
+                    unique.forEach((p, i) => {
+                        const isTop = i === 0;
+                        const bg = isTop ? 'rgba(232,93,38,0.06)' : 'rgba(255,255,255,0.02)';
+                        const border = isTop ? 'rgba(232,93,38,0.15)' : 'rgba(255,255,255,0.06)';
+                        html += '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:12px;padding:16px;text-align:center">'
+                            + '<div style="font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px">@' + p.username + '</div>'
+                            + '<div style="font-family:\'Playfair Display\',serif;font-size:28px;font-weight:800;color:' + colors[i] + ';margin:8px 0">' + fmt(p.followers) + '</div>'
+                            + '<div style="font-size:10px;color:#888;margin-bottom:10px">followers</div>'
+                            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">'
+                            + '<div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">' + fmt(p.total_hearts) + '</div><div style="color:#666">total hearts</div></div>'
+                            + '<div style="padding:6px;background:rgba(255,255,255,0.03);border-radius:6px"><div style="color:var(--cream);font-weight:600">' + (p.video_count||0).toLocaleString() + '</div><div style="color:#666">videos</div></div>'
+                            + '</div></div>';
+                    });
+                    el.innerHTML = html;
+                }
+            }
+
+            // ── Hashtag trends ──
+            const { data: hashtags } = await sb.from('hashtag_trends').select('*').order('play_count', { ascending: false });
+            if (hashtags && hashtags.length) {
+                // Group by hashtag, keep top post per hashtag
+                const byTag = {};
+                for (const h of hashtags) {
+                    const tag = h.hashtag || '?';
+                    if (!byTag[tag] || (h.play_count||0) > (byTag[tag].play_count||0)) byTag[tag] = h;
+                }
+                const top5 = Object.values(byTag).sort((a,b) => (b.play_count||0) - (a.play_count||0)).slice(0, 5);
+                const tagColors = ['var(--ember-orange)', 'var(--gold)', 'var(--teal)', 'var(--terracotta)', 'var(--cream)'];
+                const tagBgs = ['rgba(232,93,38,0.06)', 'rgba(212,168,75,0.06)', 'rgba(74,155,142,0.06)', 'rgba(198,123,92,0.06)', 'rgba(255,255,255,0.03)'];
+                const tagBorders = ['rgba(232,93,38,0.1)', 'rgba(212,168,75,0.1)', 'rgba(74,155,142,0.1)', 'rgba(198,123,92,0.1)', 'rgba(255,255,255,0.06)'];
+
+                const el = document.getElementById('hashtagGrid');
+                if (el) {
+                    const fmt = (n) => {
+                        if (!n) return '0';
+                        if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+                        if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+                        return n.toLocaleString();
+                    };
+                    let html = '';
+                    top5.forEach((h, i) => {
+                        html += '<div style="text-align:center;padding:14px;background:' + tagBgs[i] + ';border-radius:10px;border:1px solid ' + tagBorders[i] + '">'
+                            + '<div style="font-family:\'Playfair Display\',serif;font-size:18px;font-weight:700;color:' + tagColors[i] + '">' + fmt(h.play_count) + '</div>'
+                            + '<div style="font-size:10px;color:#AAA;margin-top:4px">#' + (h.hashtag||'?') + '</div>'
+                            + '<div style="font-size:9px;color:#666">top post plays</div>'
+                            + '<div style="font-size:9px;color:var(--teal);margin-top:4px">@' + (h.top_author||'?') + '</div>'
+                            + '</div>';
+                    });
+                    el.innerHTML = html;
+                }
+            }
+        }
+
+        // Load live data after page renders
+        window.addEventListener('load', () => {
+            loadLiveData().catch(e => console.warn('Supabase load failed, using static fallback:', e));
         });
     </script>
 </body>
