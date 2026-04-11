@@ -1326,7 +1326,10 @@
                 </div>
 
                 <!-- 7-DAY CONTENT CALENDAR -->
-                <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:700;margin-bottom:12px">📅 Your 7-Day Content Calendar</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:700">📅 Your 7-Day Content Calendar</div>
+                    <div id="calendarWeek" style="font-size:11px;color:#888"></div>
+                </div>
                 <div class="schedule-section" style="margin-bottom:36px">
                     <table class="schedule-table">
                         <thead>
@@ -1545,7 +1548,10 @@
 
                 <!-- DIGITAL INTELLIGENCE — POWERED BY SUPABASE -->
                 <div style="margin-top:32px">
-                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700;margin-bottom:16px" id="swHeader">📊 Digital Intelligence — SimilarWeb (loading...)</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ember-orange);font-weight:700" id="swHeader">📊 Digital Intelligence — SimilarWeb (loading...)</div>
+                        <div id="swFreshness" style="font-size:10px;color:#555;font-style:italic"></div>
+                    </div>
 
                     <!-- TRAFFIC OVERVIEW TABLE -->
                     <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:20px">
@@ -1770,7 +1776,10 @@
 
                 <!-- SOCIAL INTELLIGENCE — APIFY TIKTOK DATA (Live: April 2026) -->
                 <div style="margin-top:32px">
-                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:16px">📱 Social Intelligence — TikTok (Live via Apify)</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700">📱 Social Intelligence — TikTok (Live via Apify)</div>
+                        <div id="ttFreshness" style="font-size:10px;color:#555;font-style:italic"></div>
+                    </div>
 
                     <!-- TIKTOK PROFILE COMPARISON -->
                     <div style="background:rgba(42,42,42,0.4);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:24px;margin-bottom:20px">
@@ -2047,85 +2056,6 @@
                     <div id="firepitActions"></div>
                 </div>
 
-                <!-- OLD COACH CONTENT REMOVED — now at top of tab -->
-                <!-- Keeping just a clean closing div -->
-                <div style="display:none"><!-- placeholder -->
-                        <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);line-height:1.6;margin-bottom:12px;font-style:italic">"You're building a connection product in the middle of a loneliness epidemic. The timing is perfect. But timing doesn't win — execution does. Here's what the founders who've done this are telling you."</div>
-                        <div style="font-size:13px;color:#BBB;line-height:1.7">
-                            <p style="margin-bottom:12px">Every founder in this dashboard — from Elan Lee to Nick Jones to Zach Yadegari — converges on the same truth: <strong style="color:var(--cream)">the product is never the hard part. Distribution is.</strong> Elan spends 80% on discovery. Zach sent thousands of DMs. Koreen built community for years before shipping a card game. Soho House grew city by city through word of mouth.</p>
-                            <p style="margin-bottom:12px">Right now, Firepit's biggest risk isn't the app. It's obscurity. The playbook is clear: <strong style="color:var(--cream)">build audience → nurture community → then ship product.</strong> Greg Isenberg's ACP framework. Koreen's Instagram-first approach. Kevin Systrom hiring a community manager before an engineer.</p>
-                            <p>The cultural moment is yours. #lonelinessepidemic at 28M views. #connectiontok growing. The "friendship recession" conversation exploding. People are actively searching for what you're building. The question isn't whether they want it — it's whether they'll find it.</p>
-                        </div>
-                    </div>
-
-                    <!-- Top 3 Priorities -->
-                    <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎯 Your 3 Priorities This Week</div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
-                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--ember-orange);border-radius:10px;padding:16px">
-                            <div style="font-size:10px;color:var(--ember-orange);font-weight:700;margin-bottom:6px">PRIORITY 1</div>
-                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Film 5 Real Reactions</div>
-                            <div style="font-size:11px;color:#888;line-height:1.5">Phone camera. Real people. One Firepit card. Film the moment they answer. Lo-fi wins. This is your first week of content.</div>
-                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Elan Lee, Casey Neistat, Zach Yadegari</div>
-                        </div>
-                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--gold);border-radius:10px;padding:16px">
-                            <div style="font-size:10px;color:var(--gold);font-weight:700;margin-bottom:6px">PRIORITY 2</div>
-                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">DM 50 Micro-Creators</div>
-                            <div style="font-size:11px;color:#888;line-height:1.5">Use the Creator Radar. "Paid promo? 🔥 We built an app for real conversations. Want to try?" Volume wins. Most quit after 10. Send 50.</div>
-                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Zach Yadegari, Greg Isenberg</div>
-                        </div>
-                        <div style="background:var(--card-bg);border:1px solid var(--border-subtle);border-top:3px solid var(--teal);border-radius:10px;padding:16px">
-                            <div style="font-size:10px;color:var(--teal);font-weight:700;margin-bottom:6px">PRIORITY 3</div>
-                            <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:6px">Host 1 Firepit Evening</div>
-                            <div style="font-size:11px;color:#888;line-height:1.5">A cafe. 10-15 people. Conversation cards. Film with permission. One real event feeds a month of content and seeds the community.</div>
-                            <div style="font-size:10px;color:#666;margin-top:8px">Sources: Nick Jones, River, IRL Community Movement</div>
-                        </div>
-                    </div>
-
-                    <!-- Pattern Recognition -->
-                    <div style="font-size:11px;color:var(--terracotta);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🧠 Patterns the Coach is Seeing</div>
-                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px">
-                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--terracotta)">
-                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">Every successful connection brand started with community, not product</div>
-                            <div style="font-size:11px;color:#888">WNRS: Instagram first, cards second. Soho House: local committees first, clubs second. Exploding Kittens: Kickstarter community first, retail second.</div>
-                        </div>
-                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--teal)">
-                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">The creators making Firepit-adjacent content don't know Firepit exists yet</div>
-                            <div style="font-size:11px;color:#888">@therapyjeff, @honestconvos, @datenightideas, @friendshiptherapy — they're all making content about what Firepit solves. They should be using it.</div>
-                        </div>
-                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--gold)">
-                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">Reddit proves the demand. 14K people answered "What question changed your relationship?"</div>
-                            <div style="font-size:11px;color:#888">People are writing Firepit cards without knowing it. The product-market fit isn't theoretical — it's in 52K upvotes on a single AskReddit thread.</div>
-                        </div>
-                        <div style="background:var(--card-bg);border-radius:10px;padding:14px;border-left:3px solid var(--ember-orange)">
-                            <div style="font-size:13px;color:var(--cream);font-weight:600;margin-bottom:4px">The "Fun + Deep" quadrant is empty. That's Firepit's white space.</div>
-                            <div style="font-size:11px;color:#888">WNRS is Deep Truth. Hinge is Surface Fun. Nobody owns playful depth. Firepit's Truth ↔ Fun spectrum is the strategic moat. Protect it.</div>
-                        </div>
-                    </div>
-
-                    <!-- What to Read/Watch -->
-                    <div style="font-size:11px;color:var(--cream);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📚 Required Reading This Week</div>
-                    <div style="display:grid;gap:8px">
-                        <a href="https://tim.blog/2023/02/03/elan-lee/" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
-                            <span style="font-size:16px">🎧</span>
-                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Tim Ferriss #653: Elan Lee — How to Turn Fans into Superfans</div><div style="font-size:10px;color:#888">2hr 15min · The Exploding Kittens masterclass</div></div>
-                            <span style="color:var(--ember-orange)">↗</span>
-                        </a>
-                        <a href="https://justingarydesign.substack.com/p/elan-lee-building-exploding-kittens" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
-                            <span style="font-size:16px">📖</span>
-                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Justin Gary Design #91: Marketing as Design with Elan Lee</div><div style="font-size:10px;color:#888">45min read · Why marketers have veto power at Exploding Kittens</div></div>
-                            <span style="color:var(--ember-orange)">↗</span>
-                        </a>
-                        <a href="https://www.microempires.cc/p/cal-ai" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
-                            <span style="font-size:16px">📖</span>
-                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Micro Empires: How a 17-Year-Old Scaled Cal AI to $1M MRR</div><div style="font-size:10px;color:#888">15min read · The micro-influencer DM playbook</div></div>
-                            <span style="color:var(--ember-orange)">↗</span>
-                        </a>
-                        <a href="https://www.digitalcampfires.co/recaps/how-a-game-exploded-into-a-global-movement" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-bg);border-radius:8px;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#333'" onmouseout="this.style.background='var(--card-bg)'">
-                            <span style="font-size:16px">🔥</span>
-                            <div style="flex:1"><div style="font-size:12px;color:var(--cream)">Digital Campfires: How WNRS Exploded into a Global Movement</div><div style="font-size:10px;color:#888">20min read · Koreen Odiney's community-first playbook</div></div>
-                            <span style="color:var(--ember-orange)">↗</span>
-                        </a>
-                    </div>
                 </div>
             </div>
 
@@ -2155,21 +2085,24 @@
         <footer class="bottom-tray">
             <div class="tray-status">
                 <div class="tray-stat">
-                    <span class="tray-stat-label">Active</span>
-                    <span class="tray-stat-value">3</span>
+                    <span class="tray-stat-label">Competitors Tracked</span>
+                    <span class="tray-stat-value">6</span>
                 </div>
                 <div class="tray-stat">
-                    <span class="tray-stat-label">Today</span>
-                    <span class="tray-stat-value">47</span>
+                    <span class="tray-stat-label">Feed Items</span>
+                    <span class="tray-stat-value">134</span>
                 </div>
                 <div class="tray-stat">
-                    <span class="tray-stat-label">This Week</span>
-                    <span class="tray-stat-value">286</span>
+                    <span class="tray-stat-label">Conversation Cards</span>
+                    <span class="tray-stat-value">85</span>
+                </div>
+                <div class="tray-stat">
+                    <span class="tray-stat-label">Creator Targets</span>
+                    <span class="tray-stat-value">12</span>
                 </div>
             </div>
             <div class="tray-actions">
-                <button class="tray-btn" onclick="startNewConversation()">+ New Spark</button>
-                <button class="tray-btn" onclick="openSettings()">Settings</button>
+                <span style="font-size:10px;color:#555">Spark Board v3 — Firepit</span>
             </div>
         </footer>
     </div>
@@ -2442,22 +2375,18 @@
 
                 if (isReddit) { card.style.background = '#2A2520'; card.style.borderColor = 'rgba(212,168,75,0.2)'; }
 
-                // Generate realistic engagement metrics
+                // Show only real metrics from the data — no synthetic/random numbers
                 const viewNum = parseInt((item.views || '0').replace(/[^0-9]/g, '')) || 0;
-                const engRate = isReddit ? 0 : (Math.random() * 4 + 2).toFixed(1);
-                const saves = isReddit ? 0 : Math.floor(viewNum * (Math.random() * 0.04 + 0.01));
-                const shares = isReddit ? 0 : Math.floor(viewNum * (Math.random() * 0.03 + 0.005));
-                const comments = isReddit ? parseInt((item.views || '0').replace(/[^0-9]/g, '')) * 0.08 : Math.floor(viewNum * (Math.random() * 0.01 + 0.002));
                 const fmtNum = (n) => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : Math.floor(n);
 
                 const engMetrics = isReddit
-                    ? '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>⬆ ' + item.views + '</span><span>💬 ' + fmtNum(comments) + '</span></div>'
-                    : '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>👁 ' + (item.views||'—') + '</span><span>🔖 ' + fmtNum(saves) + ' saves</span><span>↗ ' + fmtNum(shares) + ' shares</span><span>💬 ' + fmtNum(comments) + '</span><span style="color:var(--ember-orange)">' + engRate + '% eng</span></div>';
+                    ? '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>⬆ ' + item.views + '</span></div>'
+                    : '<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:#888"><span>👁 ' + (item.views||'—') + ' views</span><span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.04);color:#666">' + item.platform + '</span></div>';
 
                 card.innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                         <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${badgeBg};color:${badgeColor};font-weight:600;text-transform:uppercase;letter-spacing:0.5px">${item.source}${item.brand ? ' · ' + item.brand : ''}</span>
-                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${saves > viewNum*0.02 ? 'rgba(232,93,38,0.15)' : 'rgba(255,255,255,0.04)'};color:${saves > viewNum*0.02 ? 'var(--ember-orange)' : '#666'}">${saves > viewNum*0.02 ? '🔖 High Save' : isReddit ? '💬 High Comment' : '📊 Standard'}</span>
+                        <span style="font-size:10px;padding:3px 8px;border-radius:10px;background:${viewNum >= 1000000 ? 'rgba(232,93,38,0.15)' : 'rgba(255,255,255,0.04)'};color:${viewNum >= 1000000 ? 'var(--ember-orange)' : '#666'}">${viewNum >= 1000000 ? '🔥 Viral' : isReddit ? '💬 Discussion' : '📊 Tracking'}</span>
                     </div>
                     <div style="color:var(--text-light);line-height:1.5;${isReddit ? 'font-family:Playfair Display,serif;font-style:italic;font-size:13px;color:#FDF5E6' : 'font-size:12px'};margin-bottom:4px">${item.content}</div>
                     ${engMetrics}
@@ -2679,14 +2608,7 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        // ACTION HANDLERS
-        function startNewConversation() {
-            alert('New conversation spark initiated!');
-        }
-
-        function openSettings() {
-            alert('Settings panel would open here');
-        }
+        // ACTION HANDLERS (removed — stub buttons replaced with real labels in tray)
 
         // FOUNDERS LAB DATA & RENDER
         const foundersData = {
@@ -2788,6 +2710,21 @@
             ).join('');
         }
 
+        // Set calendar week dates
+        function setCalendarWeek() {
+            const el = document.getElementById('calendarWeek');
+            if (!el) return;
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            el.textContent = fmt(monday) + ' — ' + fmt(sunday) + ', ' + sunday.getFullYear();
+        }
+        setCalendarWeek();
+
         // Initialize feed on page load
         window.addEventListener('load', () => {
             renderFeed('all');
@@ -2806,12 +2743,32 @@
             if (!window.supabase) return;
             const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+            const timeAgo = (d) => {
+                const diff = Date.now() - new Date(d).getTime();
+                const days = Math.floor(diff / 86400000);
+                if (days === 0) return 'Updated today';
+                if (days === 1) return 'Updated yesterday';
+                if (days < 7) return 'Updated ' + days + ' days ago';
+                if (days < 14) return 'Updated 1 week ago';
+                return '⚠️ Stale — updated ' + days + ' days ago';
+            };
+
             // ── Traffic table ──
             const { data: traffic } = await sb.from('web_traffic').select('*').order('month', { ascending: false });
             if (traffic && traffic.length) {
                 const latestMonth = traffic[0].month;
                 const latest = traffic.filter(r => r.month === latestMonth);
                 const prevMonths = traffic.filter(r => r.month !== latestMonth);
+
+                // Update freshness badge
+                const freshEl = document.getElementById('swFreshness');
+                if (freshEl) {
+                    const latest_fetch = traffic[0].fetched_at;
+                    const label = timeAgo(latest_fetch);
+                    const isStale = label.startsWith('⚠️');
+                    freshEl.style.color = isStale ? 'var(--terracotta)' : '#666';
+                    freshEl.textContent = label;
+                }
 
                 // Update header with date
                 const hdr = document.getElementById('swHeader');
@@ -2869,6 +2826,14 @@
             // ── TikTok profiles ──
             const { data: profiles } = await sb.from('tiktok_profiles').select('*').order('fetched_at', { ascending: false });
             if (profiles && profiles.length) {
+                // Update TikTok freshness badge
+                const ttFresh = document.getElementById('ttFreshness');
+                if (ttFresh) {
+                    const label = timeAgo(profiles[0].fetched_at);
+                    const isStale = label.startsWith('⚠️');
+                    ttFresh.style.color = isStale ? 'var(--terracotta)' : '#666';
+                    ttFresh.textContent = label;
+                }
                 // Dedupe: keep latest per username
                 const seen = {};
                 const unique = [];
